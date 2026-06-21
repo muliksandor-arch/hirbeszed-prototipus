@@ -138,7 +138,7 @@ document.addEventListener('click',event=>{
   const card=event.target.closest('[data-article]'); if(card){openArticle(card.dataset.article);return;}
   const sort=event.target.closest('[data-sort]'); if(sort){state.sort=sort.dataset.sort;renderFeed();saveState();return;}
   const category=event.target.closest('[data-category]'); if(category){state.category=category.dataset.category;renderFeed();saveState();return;}
-  const action=event.target.closest('[data-action]'); if(action){const a=action.dataset.action;if(a==='search')searchSheet();if(a==='library')librarySheet();if(a==='assistant-toggle'){state.assistantMode=state.assistantMode==='voice'?'text':'voice';renderAssistant();}if(a==='voice-demo')toast('Hangmód prototípus: mondd el a kérdésed');if(a==='car-more')openSheet('Hangutasítások','Autós mód',`<div class="settings-group">${settingRow(['›','Következő','A következő hír indítása','cmd-next'])}${settingRow(['＋','Részletek','Hosszabb RSS-tartalom','cmd-detail'])}${settingRow(['♡','Mentés','Mentés későbbre','cmd-save'])}</div>`);return;}
+  const action=event.target.closest('[data-action]'); if(action){const a=action.dataset.action;if(a==='close-sheet'){closeSheet();return;}if(a==='search')searchSheet();if(a==='library')librarySheet();if(a==='assistant-toggle'){state.assistantMode=state.assistantMode==='voice'?'text':'voice';renderAssistant();}if(a==='voice-demo')toast('Hangmód prototípus: mondd el a kérdésed');if(a==='car-more')openSheet('Hangutasítások','Autós mód',`<div class="settings-group">${settingRow(['›','Következő','A következő hír indítása','cmd-next'])}${settingRow(['＋','Részletek','Hosszabb RSS-tartalom','cmd-detail'])}${settingRow(['♡','Mentés','Mentés későbbre','cmd-save'])}</div>`);return;}
   const car=event.target.closest('[data-car]'); if(car){if(car.dataset.car==='mic'){state.mic=!state.mic;toast(state.mic?'Mikrofon bekapcsolva':'Mikrofon kikapcsolva');renderCar();}if(car.dataset.car==='auto'){state.autoNext=!state.autoNext;renderCar();}if(car.dataset.car==='play'){state.playing?stopSpeech():speakCurrent();}saveState();return;}
   const mode=event.target.closest('[data-mode]'); if(mode){state.assistantMode=mode.dataset.mode;renderAssistant();saveState();return;}
   const question=event.target.closest('[data-question]'); if(question){state.assistantMode='text';renderAssistant();setTimeout(()=>appendChat(question.dataset.question),0);return;}
@@ -161,7 +161,8 @@ document.addEventListener('input',event=>{
 document.addEventListener('submit',event=>{if(event.target.id==='composer'){event.preventDefault();const input=$('#chatInput');if(input.value.trim()){appendChat(input.value.trim());input.value='';}}});
 function appendChat(question){const log=$('#chatLog');if(!log)return;log.insertAdjacentHTML('beforeend',`<div class="bubble user">${question}</div><div class="bubble">${answerFor(question)}<span class="sources">A helyi RSS-hírfolyam alapján</span></div>`);view.scrollTop=view.scrollHeight;}
 
-$('#sheetBack').addEventListener('click',closeSheet);
+$('#sheetBack').addEventListener('click',event=>{event.preventDefault();event.stopPropagation();closeSheet();});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&sheet.classList.contains('open'))closeSheet();});
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(state.theme==='system')applyTheme();});
 applyTheme(); render();
 if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
