@@ -9,7 +9,8 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/brand/hirbeszed-app-icon-light.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/brand/hirbeszed-app-icon-light.svg">
-  <link rel="stylesheet" href="styles.css?v=10">
+  <link rel="stylesheet" href="styles.css?v=11">
+  <link rel="stylesheet" href="topics-update.css?v=1">
 </head>
 <body>
   <div class="prototype-note">Kattintható mobilprototípus · a telefonodon teljes képernyőn jelenik meg</div>
@@ -28,18 +29,10 @@
     <main id="view" class="view" tabindex="-1"></main>
 
     <nav class="bottom-nav" aria-label="Fő navigáció">
-      <button type="button" data-route="feed" aria-label="Hírfolyam">
-        <span class="nav-icon">▤</span><span>Hírfolyam</span>
-      </button>
-      <button type="button" data-route="car" aria-label="Autós mód">
-        <span class="nav-icon">▰</span><span>Autós mód</span>
-      </button>
-      <button type="button" data-route="assistant" aria-label="Asszisztens">
-        <span class="nav-icon">◉</span><span>Asszisztens</span>
-      </button>
-      <button type="button" data-route="settings" aria-label="Beállítások">
-        <span class="nav-icon">⚙</span><span>Beállítások</span>
-      </button>
+      <button type="button" data-route="feed" aria-label="Hírfolyam"><span class="nav-icon">▤</span><span>Hírfolyam</span></button>
+      <button type="button" data-route="car" aria-label="Autós mód"><span class="nav-icon">▰</span><span>Autós mód</span></button>
+      <button type="button" data-route="assistant" aria-label="Asszisztens"><span class="nav-icon">◉</span><span>Asszisztens</span></button>
+      <button type="button" data-route="settings" aria-label="Beállítások"><span class="nav-icon">⚙</span><span>Beállítások</span></button>
     </nav>
 
     <section id="sheet" class="sheet" aria-hidden="true">
@@ -52,11 +45,7 @@
 
     <section id="subscriptionGate" class="subscription-gate" aria-hidden="true">
       <div class="gate-brand"><span class="gate-logo">✦</span><div class="wordmark"><span>Hír</span>beszéd</div></div>
-      <div class="gate-copy">
-        <span id="gateKicker" class="subscription-kicker"></span>
-        <h1 id="gateTitle"></h1>
-        <p id="gateCopy"></p>
-      </div>
+      <div class="gate-copy"><span id="gateKicker" class="subscription-kicker"></span><h1 id="gateTitle"></h1><p id="gateCopy"></p></div>
       <div class="gate-plans">
         <button class="gate-plan" data-subscribe="basic"><span><strong>Hírbeszéd Alap</strong><small>Rendszerhang, autós mód és asszisztens</small></span><b>1500 Ft/hó</b></button>
         <button class="gate-plan pro" data-subscribe="pro"><span><em>AJÁNLOTT</em><strong>Hírbeszéd Pro</strong><small>250 perc prémium AI-hang havonta</small></span><b>3500 Ft/hó</b></button>
@@ -67,6 +56,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
+  <script src="topics-update.js?v=1"></script>
 </body>
 </html>
