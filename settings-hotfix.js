@@ -18,6 +18,13 @@
       try{const url=new URL(input.value.trim());const name=url.hostname.replace(/^www\./,'');state.sources[name]=true;saveState();toast(`${name} hozzáadva`);settingsSheet('sources');}catch{toast('Adj meg egy érvényes RSS-linket');}
       return;
     }
+    const library=event.target.closest('[data-library]');
+    if(library){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      librarySheet(library.dataset.library);
+      return;
+    }
     const toggle=event.target.closest('[data-toggle-setting]');
     if(!toggle)return;
     event.preventDefault();
