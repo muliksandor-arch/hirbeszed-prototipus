@@ -2,13 +2,57 @@
 <html lang="hu">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Hírbeszéd – prototípus</title>
-  <meta name="description" content="A Hírbeszéd mobilalkalmazás végleges képernyőrendszere.">
-  <meta http-equiv="refresh" content="0;url=docs/wireframes/osszes-oldal.html">
-  <link rel="icon" href="assets/brand/hirbeszed-app-icon-light.png">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0D191E">
+  <meta name="description" content="A Hírbeszéd mobilalkalmazás kattintható prototípusa.">
+  <title>Hírbeszéd – mobilprototípus</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/brand/hirbeszed-app-icon-light.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/brand/hirbeszed-app-icon-light.svg">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
-  <p><a href="docs/wireframes/osszes-oldal.html">A Hírbeszéd képernyőrendszer megnyitása</a></p>
+  <div class="prototype-note">Kattintható mobilprototípus · a telefonodon teljes képernyőn jelenik meg</div>
+  <div id="phone" class="phone-shell">
+    <header class="topbar">
+      <div class="brand-block" aria-label="Hírbeszéd">
+        <img id="brandMark" src="assets/brand/hirbeszed-mark-light.svg" alt="">
+        <div>
+          <div class="wordmark"><span>Hír</span>beszéd</div>
+          <div id="pageTitle" class="page-title">Autós mód</div>
+        </div>
+      </div>
+      <div id="headerActions" class="header-actions"></div>
+    </header>
+
+    <main id="view" class="view" tabindex="-1"></main>
+
+    <nav class="bottom-nav" aria-label="Fő navigáció">
+      <button type="button" data-route="feed" aria-label="Hírfolyam">
+        <span class="nav-icon">▤</span><span>Hírfolyam</span>
+      </button>
+      <button type="button" data-route="car" aria-label="Autós mód">
+        <span class="nav-icon">▰</span><span>Autós mód</span>
+      </button>
+      <button type="button" data-route="assistant" aria-label="Asszisztens">
+        <span class="nav-icon">◉</span><span>Asszisztens</span>
+      </button>
+      <button type="button" data-route="settings" aria-label="Beállítások">
+        <span class="nav-icon">⚙</span><span>Beállítások</span>
+      </button>
+    </nav>
+
+    <section id="sheet" class="sheet" aria-hidden="true">
+      <header class="sheet-header">
+        <button id="sheetBack" class="icon-button" type="button" aria-label="Vissza">‹</button>
+        <div><h2 id="sheetTitle"></h2><p id="sheetSubtitle"></p></div>
+      </header>
+      <div id="sheetBody" class="sheet-body"></div>
+    </section>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+  <script src="app.js?v=4"></script>
 </body>
 </html>
+
