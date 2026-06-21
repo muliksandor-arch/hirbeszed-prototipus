@@ -1,5 +1,18 @@
 (function(){
+  function ensureSkipIconStyle(){
+    if(document.getElementById('carSkipIconStyle'))return;
+    const style=document.createElement('style');
+    style.id='carSkipIconStyle';
+    style.textContent='.skip-icon{position:relative;display:block;width:30px;height:24px;margin:0 auto 3px;color:var(--text)}.skip-icon svg{width:100%;height:100%;display:block;fill:currentColor}.skip-icon .skip-bar{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round}.skip-icon.off{color:var(--muted)}.skip-icon.off:after{content:"";position:absolute;left:1px;right:1px;top:50%;height:3px;border-radius:3px;background:var(--coral);transform:rotate(-28deg);box-shadow:0 0 0 1px color-mix(in srgb,var(--surface) 72%,transparent)}';
+    document.head.appendChild(style);
+  }
+
+  function skipIcon(active=true){
+    return `<span class="skip-icon ${active?'':'off'}" aria-hidden="true"><svg viewBox="0 0 28 24" focusable="false"><path d="M4 5l8 7-8 7V5zM13 5l8 7-8 7V5z"></path><path class="skip-bar" d="M24 5v14"></path></svg></span>`;
+  }
+
   function patchCarControls(){
+    ensureSkipIconStyle();
     const controls=document.querySelector('.car-controls');
     if(!controls)return;
     const mic=controls.querySelector('[data-car="mic"]');
@@ -7,7 +20,7 @@
     const auto=controls.querySelector('[data-car="auto"]');
     if(!mic||!play||!auto)return;
     const autoActive=!auto.classList.contains('off');
-    auto.innerHTML=`<strong>⇥</strong>${autoActive?'Hírléptető aktív':'Hírléptető kikapcsolt'}`;
+    auto.innerHTML=`${skipIcon(autoActive)}${autoActive?'Hírléptető aktív':'Hírléptető kikapcsolt'}`;
     controls.append(mic,play,auto);
   }
 
