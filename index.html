@@ -9,7 +9,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/brand/hirbeszed-app-icon-light.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/brand/hirbeszed-app-icon-light.svg">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
   <div class="prototype-note">Kattintható mobilprototípus · a telefonodon teljes képernyőn jelenik meg</div>
@@ -44,7 +44,7 @@
 
     <section id="sheet" class="sheet" aria-hidden="true">
       <header class="sheet-header">
-        <button id="sheetBack" class="icon-button" type="button" aria-label="Vissza">‹</button>
+        <button id="sheetBack" class="icon-button sheet-back-button" type="button" data-action="close-sheet" aria-label="Vissza">←</button>
         <div><h2 id="sheetTitle"></h2><p id="sheetSubtitle"></p></div>
       </header>
       <div id="sheetBody" class="sheet-body"></div>
@@ -52,7 +52,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>
 
