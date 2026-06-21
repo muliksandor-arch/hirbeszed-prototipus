@@ -1,5 +1,13 @@
 (function(){
   document.addEventListener('click',event=>{
+    const themeButton=event.target.closest('button[data-theme]');
+    if(!themeButton&&document.documentElement.hasAttribute('data-theme')){
+      const currentTheme=document.documentElement.dataset.theme;
+      document.documentElement.removeAttribute('data-theme');
+      setTimeout(()=>{
+        if(!document.documentElement.hasAttribute('data-theme'))document.documentElement.dataset.theme=currentTheme;
+      },0);
+    }
     const profileSubmit=event.target.closest('#profileSettingsForm button[type="submit"]');
     if(profileSubmit){
       event.preventDefault();
@@ -7,7 +15,13 @@
       const form=profileSubmit.closest('form');
       const name=form.elements.profileName.value.trim();
       const email=form.elements.profileEmail.value.trim();
-      if(name&&email){state.settingsPrefs.profileName=name;state.settingsPrefs.profileEmail=email;saveState();toast('A profil mentve');settingsSheet('account');}
+      if(name&&email){
+        state.settingsPrefs.profileName=name;
+        state.settingsPrefs.profileEmail=email;
+        saveState();
+        toast('A profil mentve');
+        settingsSheet('account');
+      }
       return;
     }
     const rssSubmit=event.target.closest('#rssSettingsForm button[type="submit"]');
@@ -15,7 +29,16 @@
       event.preventDefault();
       event.stopImmediatePropagation();
       const input=document.querySelector('#rssSettingsUrl');
-      try{const url=new URL(input.value.trim());const name=url.hostname.replace(/^www\./,'');state.sources[name]=true;saveState();toast(`${name} hozzáadva`);settingsSheet('sources');}catch{toast('Adj meg egy érvényes RSS-linket');}
+      try{
+        const url=new URL(input.value.trim());
+        const name=url.hostname.replace(/^www\./,'');
+        state.sources[name]=true;
+        saveState();
+        toast(`${name} hozzáadva`);
+        settingsSheet('sources');
+      }catch{
+        toast('Adj meg egy érvényes RSS-linket');
+      }
       return;
     }
     const library=event.target.closest('[data-library]');
