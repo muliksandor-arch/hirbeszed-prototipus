@@ -1,6 +1,6 @@
 (function(){
-  if(window.__hirbeszedAuthV2Loaded)return;
-  window.__hirbeszedAuthV2Loaded=true;
+  if(window.__hirbeszedAuthV3Loaded)return;
+  window.__hirbeszedAuthV3Loaded=true;
 
   const STORE='hirbeszed-state';
   const LAUNCH='hirbeszed-default-launch';
@@ -12,7 +12,7 @@
       style.id='authHotfixStyle';
       document.head.appendChild(style);
     }
-    style.textContent='.auth-screen{display:flex;flex-direction:column;gap:13px}.auth-hero{padding:20px 16px;border:1px solid color-mix(in srgb,var(--coral) 35%,var(--border));border-radius:24px;background:linear-gradient(145deg,color-mix(in srgb,var(--coral) 10%,var(--surface)),var(--surface));text-align:left}.auth-hero h1{font-size:23px;line-height:28px;margin:8px 0 7px}.auth-hero p{font-size:12px;line-height:18px;color:var(--muted);margin:0}.auth-kicker{font-size:9px;font-weight:900;letter-spacing:1px;color:var(--coral)}.auth-badge{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:15px;background:var(--coral);color:white;font-size:19px}.auth-form{display:grid;gap:9px}.auth-form label{font-size:10px;font-weight:800;color:var(--muted);margin-left:3px}.auth-form input{width:100%;height:46px;border:1px solid var(--border);border-radius:15px;background:var(--surface);color:var(--text);padding:0 13px;outline:none}.auth-form input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 14%,transparent)}.auth-actions{display:grid;gap:9px}.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.auth-social{height:50px;border:1px solid var(--border);border-radius:16px;background:var(--surface);color:var(--text);font-weight:850}.auth-social.facebook{border-color:color-mix(in srgb,#1877F2 55%,var(--border));color:#1877F2}.auth-social.google{border-color:color-mix(in srgb,var(--coral) 45%,var(--border));color:var(--coral)}.auth-divider{text-align:center;color:var(--muted);font-size:10px}.auth-code{letter-spacing:10px;text-align:center;font-size:22px;font-weight:900}.auth-note{font-size:10px;line-height:15px;color:var(--muted);text-align:center;margin:0 8px}.auth-profile-card{border-radius:24px;padding:18px;background:linear-gradient(145deg,var(--primary),color-mix(in srgb,var(--primary) 72%,var(--accent)));color:#fff}.auth-profile-card h1{font-size:22px;margin:10px 0 4px}.auth-profile-card p{font-size:11px;color:rgba(255,255,255,.74);margin:0}.auth-status{display:inline-flex;gap:6px;align-items:center;border:1px solid rgba(255,255,255,.24);border-radius:999px;padding:6px 9px;font-size:9px;font-weight:850}.auth-provider-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.auth-provider-row span{border-radius:999px;background:rgba(255,255,255,.12);padding:6px 9px;font-size:9px;font-weight:800}.danger-button{width:100%;height:46px;border:1px solid color-mix(in srgb,var(--coral) 50%,var(--border));border-radius:15px;background:transparent;color:var(--coral);font-weight:850}.privacy-check{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--border);border-radius:16px;background:var(--surface);padding:12px;font-size:11px;line-height:16px;color:var(--text)}.privacy-check input{width:18px;height:18px;flex:0 0 18px;accent-color:var(--coral)}.privacy-link{margin-top:-7px}.legal-placeholder{display:grid;gap:11px}.legal-placeholder h3{font-size:13px;margin:0}.legal-placeholder p,.legal-placeholder li{font-size:11px;line-height:17px;color:var(--muted)}.onboarding-plan{width:100%;border:1px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text);padding:16px;text-align:left;display:flex;justify-content:space-between;gap:12px}.onboarding-plan.pro{border:2px solid var(--coral);padding:15px}.onboarding-plan span strong,.onboarding-plan span small,.onboarding-plan em{display:block}.onboarding-plan span strong{font-size:15px}.onboarding-plan span small{font-size:10px;line-height:15px;color:var(--muted);margin-top:5px}.onboarding-plan em{font-style:normal;color:var(--coral);font-size:8px;font-weight:900;letter-spacing:.8px;margin-bottom:5px}.onboarding-plan b{font-size:12px;color:var(--coral);white-space:nowrap}.reset-warning{border:1px solid color-mix(in srgb,var(--coral) 42%,var(--border));background:color-mix(in srgb,var(--coral) 8%,var(--surface));border-radius:22px;padding:18px}.reset-warning h1{font-size:21px;line-height:26px;margin:8px 0}.reset-warning p{font-size:12px;line-height:18px;color:var(--muted);margin:0}';
+    style.textContent='.auth-screen{display:flex;flex-direction:column;gap:13px}.welcome-screen{display:flex;flex-direction:column;gap:14px}.welcome-card{position:relative;overflow:hidden;border:1px solid color-mix(in srgb,var(--coral) 42%,var(--border));border-radius:30px;padding:23px 18px 18px;background:radial-gradient(circle at 20% 5%,color-mix(in srgb,var(--coral) 22%,transparent),transparent 34%),linear-gradient(145deg,var(--primary),color-mix(in srgb,var(--primary) 72%,var(--accent)));color:#fff;box-shadow:var(--shadow)}.welcome-card:after{content:"";position:absolute;right:-45px;bottom:-55px;width:170px;height:170px;border-radius:50%;border:30px solid rgba(255,255,255,.08)}.welcome-brand{display:flex;align-items:center;gap:12px;position:relative;z-index:1}.welcome-brand img{width:46px;height:46px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.18))}.welcome-wordmark{font-size:24px;font-weight:900;letter-spacing:-.8px}.welcome-wordmark span{color:#FF755F}.welcome-card h1{position:relative;z-index:1;font-size:27px;line-height:31px;letter-spacing:-.7px;margin:23px 0 9px}.welcome-card p{position:relative;z-index:1;font-size:12px;line-height:18px;color:rgba(255,255,255,.76);margin:0}.welcome-features{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}.welcome-features span{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.1);border-radius:999px;padding:7px 9px;font-size:9px;font-weight:850}.welcome-wave{position:relative;z-index:1;display:flex;gap:5px;align-items:end;height:34px;margin-top:16px}.welcome-wave i{display:block;width:6px;border-radius:999px;background:#72C8BC}.welcome-wave i:nth-child(2),.welcome-wave i:nth-child(5){height:28px;background:#FF755F}.welcome-wave i:nth-child(1),.welcome-wave i:nth-child(7){height:12px}.welcome-wave i:nth-child(3),.welcome-wave i:nth-child(6){height:22px}.welcome-wave i:nth-child(4){height:34px}.auth-hero{padding:20px 16px;border:1px solid color-mix(in srgb,var(--coral) 35%,var(--border));border-radius:24px;background:linear-gradient(145deg,color-mix(in srgb,var(--coral) 10%,var(--surface)),var(--surface));text-align:left}.auth-hero h1{font-size:23px;line-height:28px;margin:8px 0 7px}.auth-hero p{font-size:12px;line-height:18px;color:var(--muted);margin:0}.auth-kicker{font-size:9px;font-weight:900;letter-spacing:1px;color:var(--coral)}.auth-badge{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:15px;background:var(--coral);color:white;font-size:19px}.auth-form{display:grid;gap:9px}.auth-form label{font-size:10px;font-weight:800;color:var(--muted);margin-left:3px}.auth-form input{width:100%;height:46px;border:1px solid var(--border);border-radius:15px;background:var(--surface);color:var(--text);padding:0 13px;outline:none}.auth-form input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 14%,transparent)}.auth-actions,.provider-list{display:grid;gap:9px}.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.auth-social{height:50px;border:1px solid var(--border);border-radius:16px;background:var(--surface);color:var(--text);font-weight:850}.provider-list .auth-social{display:flex;align-items:center;justify-content:center;gap:8px}.auth-social.facebook{border-color:color-mix(in srgb,#1877F2 55%,var(--border));color:#1877F2}.auth-social.google{border-color:color-mix(in srgb,var(--coral) 45%,var(--border));color:var(--coral)}.auth-social.apple{background:#101418;border-color:#101418;color:#fff}[data-theme="dark"] .auth-social.apple{background:#F4FAF7;border-color:#F4FAF7;color:#101418}.auth-divider{text-align:center;color:var(--muted);font-size:10px}.auth-code{letter-spacing:10px;text-align:center;font-size:22px;font-weight:900}.auth-note{font-size:10px;line-height:15px;color:var(--muted);text-align:center;margin:0 8px}.auth-profile-card{border-radius:24px;padding:18px;background:linear-gradient(145deg,var(--primary),color-mix(in srgb,var(--primary) 72%,var(--accent)));color:#fff}.auth-profile-card h1{font-size:22px;margin:10px 0 4px}.auth-profile-card p{font-size:11px;color:rgba(255,255,255,.74);margin:0}.auth-status{display:inline-flex;gap:6px;align-items:center;border:1px solid rgba(255,255,255,.24);border-radius:999px;padding:6px 9px;font-size:9px;font-weight:850}.auth-provider-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.auth-provider-row span{border-radius:999px;background:rgba(255,255,255,.12);padding:6px 9px;font-size:9px;font-weight:800}.danger-button{width:100%;height:46px;border:1px solid color-mix(in srgb,var(--coral) 50%,var(--border));border-radius:15px;background:transparent;color:var(--coral);font-weight:850}.privacy-check{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--border);border-radius:16px;background:var(--surface);padding:12px;font-size:11px;line-height:16px;color:var(--text)}.privacy-check input{width:18px;height:18px;flex:0 0 18px;accent-color:var(--coral)}.privacy-link{margin-top:-7px}.legal-placeholder{display:grid;gap:11px}.legal-placeholder h3{font-size:13px;margin:0}.legal-placeholder p,.legal-placeholder li{font-size:11px;line-height:17px;color:var(--muted)}.onboarding-plan{width:100%;border:1px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text);padding:16px;text-align:left;display:flex;justify-content:space-between;gap:12px}.onboarding-plan.pro{border:2px solid var(--coral);padding:15px}.onboarding-plan span strong,.onboarding-plan span small,.onboarding-plan em{display:block}.onboarding-plan span strong{font-size:15px}.onboarding-plan span small{font-size:10px;line-height:15px;color:var(--muted);margin-top:5px}.onboarding-plan em{font-style:normal;color:var(--coral);font-size:8px;font-weight:900;letter-spacing:.8px;margin-bottom:5px}.onboarding-plan b{font-size:12px;color:var(--coral);white-space:nowrap}.reset-warning{border:1px solid color-mix(in srgb,var(--coral) 42%,var(--border));background:color-mix(in srgb,var(--coral) 8%,var(--surface));border-radius:22px;padding:18px}.reset-warning h1{font-size:21px;line-height:26px;margin:8px 0}.reset-warning p{font-size:12px;line-height:18px;color:var(--muted);margin:0}';
   }
 
   function authState(){
@@ -21,7 +21,8 @@
   }
 
   function onboardingState(){
-    if(!state.onboarding)state.onboarding={required:false,authDone:false,subscriptionDone:false,privacyAccepted:false,proOfferAvailable:false,completed:false};
+    if(!state.onboarding)state.onboarding={required:false,introSeen:false,authDone:false,subscriptionDone:false,privacyAccepted:false,proOfferAvailable:false,completed:false};
+    if(typeof state.onboarding.introSeen==='undefined')state.onboarding.introSeen=false;
     return state.onboarding;
   }
 
@@ -62,25 +63,34 @@
     return `<label class="privacy-check"><input id="privacyAccepted" type="checkbox" ${checked}><span>Elfogadom az adatvédelmi tájékoztatót és a prototípus használati feltételeit.</span></label><button class="text-button privacy-link" data-auth-action="privacy">Adatvédelmi tájékoztató megnyitása</button>`;
   }
 
+  function socialButtons(){
+    return `<div class="provider-list"><button class="auth-social apple" data-auth-action="social-apple"> Bejelentkezés Apple-lel</button><button class="auth-social facebook" data-auth-action="social-facebook">Facebook folytatás</button><button class="auth-social google" data-auth-action="social-google">Google folytatás</button></div>`;
+  }
+
+  function welcomeSheet(){
+    ensureAuthStyle();
+    openSheet('Hírbeszéd','Üdvözlő képernyő',`<section class="welcome-screen"><div class="welcome-card"><div class="welcome-brand"><img src="assets/brand/hirbeszed-mark-light.svg" alt=""><div class="welcome-wordmark"><span>Hír</span>beszéd</div></div><h1>Üdvözlünk a jövő hírapplikációjában.</h1><p>Friss magyar hírek, autós felolvasás, hangalapú vezérlés és AI asszisztens egyetlen letisztult appban.</p><div class="welcome-features"><span>RSS hírfolyam</span><span>Autós mód</span><span>AI beszélgetés</span></div><div class="welcome-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>${privacyHtml()}${socialButtons()}<button class="primary-button coral-button" data-auth-action="choose-register">Email / telefon regisztráció</button><button class="secondary-button" data-auth-action="login">Már van fiókom</button><p class="auth-note">A 14 napos próba az előfizetés-választás után indul. A fizetést később az Apple vagy Google áruház kezeli.</p></section>`);
+  }
+
   function accountSheet(){
     ensureAuthStyle();
     const auth=authState();
     if(auth.loggedIn){
-      openSheet('Fiók és biztonság','Bejelentkezve',`<section class="auth-screen"><div class="auth-profile-card"><span class="auth-status">✓ BELÉPVE</span><h1>${auth.name||'Hírbeszéd felhasználó'}</h1><p>${auth.email||auth.phone||'Közösségi fiókkal belépve'}</p><div class="auth-provider-row"><span>${auth.provider||'Email / telefon'}</span><span>${auth.twoFactor?'2FA bekapcsolva':'2FA nincs bekapcsolva'}</span></div></div><div class="settings-group">${settingRow(['♙','Profiladatok','Név, email és telefonszám','auth-profile'])}${settingRow(['A','Kapcsolt fiókok','Facebook, Google, email','auth-accounts'])}${settingRow(['✦','Kétlépcsős védelem',auth.twoFactor?'Bekapcsolva':'Kikapcsolva','auth-security'])}</div><button class="danger-button" data-auth-action="logout">Kijelentkezés</button></section>`);
+      openSheet('Fiók és biztonság','Bejelentkezve',`<section class="auth-screen"><div class="auth-profile-card"><span class="auth-status">✓ BELÉPVE</span><h1>${auth.name||'Hírbeszéd felhasználó'}</h1><p>${auth.email||auth.phone||'Közösségi fiókkal belépve'}</p><div class="auth-provider-row"><span>${auth.provider||'Email / telefon'}</span><span>${auth.twoFactor?'2FA bekapcsolva':'2FA nincs bekapcsolva'}</span></div></div><div class="settings-group">${settingRow(['♙','Profiladatok','Név, email és telefonszám','auth-profile'])}${settingRow(['A','Kapcsolt fiókok','Apple, Facebook, Google, email','auth-accounts'])}${settingRow(['✦','Kétlépcsős védelem',auth.twoFactor?'Bekapcsolva':'Kikapcsolva','auth-security'])}</div><button class="danger-button" data-auth-action="logout">Kijelentkezés</button></section>`);
       return;
     }
-    openSheet('Fiók és biztonság','Kijelentkezve',`<section class="auth-screen"><div class="auth-hero"><span class="auth-badge">♙</span><div class="auth-kicker">FIÓK SZÜKSÉGES</div><h1>Mentsd a híreket, előzményeket és előfizetést.</h1><p>A végleges appban itt történik a belépés. A prototípus nem küld adatot külső rendszerbe.</p></div><div class="social-grid"><button class="auth-social facebook" data-auth-action="social-facebook">Facebook</button><button class="auth-social google" data-auth-action="social-google">Google</button></div><div class="auth-actions"><button class="primary-button coral-button" data-auth-action="login">Belépés emaillel vagy telefonnal</button><button class="secondary-button" data-auth-action="register">Új fiók létrehozása</button></div><p class="auth-note">Emailes vagy telefonszámos regisztrációnál kétlépcsős azonosító kódot is mutatunk.</p></section>`);
+    openSheet('Fiók és biztonság','Kijelentkezve',`<section class="auth-screen"><div class="auth-hero"><span class="auth-badge">♙</span><div class="auth-kicker">FIÓK SZÜKSÉGES</div><h1>Mentsd a híreket, előzményeket és előfizetést.</h1><p>A végleges appban itt történik a belépés. A prototípus nem küld adatot külső rendszerbe.</p></div>${socialButtons()}<div class="auth-actions"><button class="primary-button coral-button" data-auth-action="login">Belépés emaillel vagy telefonnal</button><button class="secondary-button" data-auth-action="register">Új fiók létrehozása</button></div><p class="auth-note">Emailes vagy telefonszámos regisztrációnál kétlépcsős azonosító kódot is mutatunk.</p></section>`);
   }
 
   function loginSheet(){
     ensureAuthStyle();
-    openSheet('Belépés','Email, telefon vagy közösségi fiók',`<section class="auth-screen"><div class="auth-form"><label for="authLoginId">Email vagy telefonszám</label><input id="authLoginId" autocomplete="username" placeholder="anna@pelda.hu vagy +36..."><label for="authLoginPass">Jelszó</label><input id="authLoginPass" type="password" autocomplete="current-password" placeholder="••••••••"></div>${onboardingState().required?privacyHtml():''}<button class="primary-button coral-button" data-auth-action="start-login">Belépés</button><div class="auth-divider">vagy</div><div class="social-grid"><button class="auth-social facebook" data-auth-action="social-facebook">Facebook</button><button class="auth-social google" data-auth-action="social-google">Google</button></div><button class="text-button" data-auth-action="forgot">Elfelejtett jelszó</button><button class="secondary-button" data-auth-action="register">Nincs fiókom, regisztrálok</button></section>`);
+    openSheet('Belépés','Email, telefon vagy közösségi fiók',`<section class="auth-screen"><div class="auth-hero"><span class="auth-badge">↪</span><div class="auth-kicker">VISSZATÉRŐ FELHASZNÁLÓ</div><h1>Folytasd ott, ahol abbahagytad.</h1><p>Mentett hírek, előzmények és előfizetés egy fiókban.</p></div><div class="auth-form"><label for="authLoginId">Email vagy telefonszám</label><input id="authLoginId" autocomplete="username" placeholder="anna@pelda.hu vagy +36..."><label for="authLoginPass">Jelszó</label><input id="authLoginPass" type="password" autocomplete="current-password" placeholder="••••••••"></div>${onboardingState().required?privacyHtml():''}<button class="primary-button coral-button" data-auth-action="start-login">Belépés</button><div class="auth-divider">vagy</div>${socialButtons()}<button class="text-button" data-auth-action="forgot">Elfelejtett jelszó</button><button class="secondary-button" data-auth-action="register">Nincs fiókom, regisztrálok</button></section>`);
   }
 
   function registerSheet(){
     ensureAuthStyle();
     const first=onboardingState().required;
-    openSheet(first?'Üdv a Hírbeszédben':'Regisztráció',first?'Első indítás · fiók létrehozása':'14 napos próba előtt',`<section class="auth-screen"><div class="auth-form"><label for="authRegName">Név</label><input id="authRegName" autocomplete="name" placeholder="Teljes név"><label for="authRegEmail">Email</label><input id="authRegEmail" autocomplete="email" inputmode="email" placeholder="email@pelda.hu"><label for="authRegPhone">Telefonszám</label><input id="authRegPhone" autocomplete="tel" inputmode="tel" placeholder="+36..."><label for="authRegPass">Jelszó</label><input id="authRegPass" type="password" autocomplete="new-password" placeholder="Legalább 8 karakter"></div>${privacyHtml()}<button class="primary-button coral-button" data-auth-action="start-register">Regisztráció és kód küldése</button><div class="auth-divider">gyors regisztráció</div><div class="social-grid"><button class="auth-social facebook" data-auth-action="social-facebook">Facebook</button><button class="auth-social google" data-auth-action="social-google">Google</button></div><button class="text-button" data-auth-action="login">Már van fiókom</button></section>`);
+    openSheet(first?'Fiók létrehozása':'Regisztráció',first?'Első indítás · regisztráció':'14 napos próba előtt',`<section class="auth-screen"><div class="auth-hero"><span class="auth-badge">✦</span><div class="auth-kicker">HÍRBESZÉD FIÓK</div><h1>A személyes hírfolyamod innen indul.</h1><p>Regisztráció után jöhet az előfizetés-választás, majd az autós mód automatikusan elindul.</p></div><div class="auth-form"><label for="authRegName">Név</label><input id="authRegName" autocomplete="name" placeholder="Teljes név"><label for="authRegEmail">Email</label><input id="authRegEmail" autocomplete="email" inputmode="email" placeholder="email@pelda.hu"><label for="authRegPhone">Telefonszám</label><input id="authRegPhone" autocomplete="tel" inputmode="tel" placeholder="+36..."><label for="authRegPass">Jelszó</label><input id="authRegPass" type="password" autocomplete="new-password" placeholder="Legalább 8 karakter"></div>${privacyHtml()}<button class="primary-button coral-button" data-auth-action="start-register">Regisztráció és kód küldése</button><div class="auth-divider">gyors regisztráció</div>${socialButtons()}<button class="text-button" data-auth-action="login">Már van fiókom</button></section>`);
   }
 
   function twoFactorSheet(mode){
@@ -97,7 +107,7 @@
 
   function privacySheet(){
     ensureAuthStyle();
-    openSheet('Adatvédelmi tájékoztató','Ideiglenes prototípus-oldal',`<section class="auth-screen legal-placeholder"><div class="auth-hero"><span class="auth-badge">§</span><div class="auth-kicker">JOGI SZÖVEG KÉSZÜL</div><h1>Adatkezelési alapelvek</h1><p>Ez egy ideiglenes prototípus-oldal. A végleges jogi szöveget később készítjük el.</p></div><h3>Mit fog tartalmazni?</h3><ul><li>Fiókadatok kezelése: email, telefonszám, közösségi belépés.</li><li>Hírhasználati adatok: mentések, előzmények, érdeklődési témák.</li><li>Helyi hírekhez használt hozzávetőleges helyadatok.</li><li>Előfizetési státusz kezelése az Apple vagy Google áruházon keresztül.</li></ul><p>A prototípus jelenleg nem küld valódi regisztrációs adatot külső szerverre.</p><button class="primary-button" data-auth-action="register">Vissza a regisztrációhoz</button></section>`);
+    openSheet('Adatvédelmi tájékoztató','Ideiglenes prototípus-oldal',`<section class="auth-screen legal-placeholder"><div class="auth-hero"><span class="auth-badge">§</span><div class="auth-kicker">JOGI SZÖVEG KÉSZÜL</div><h1>Adatkezelési alapelvek</h1><p>Ez egy ideiglenes prototípus-oldal. A végleges jogi szöveget később készítjük el.</p></div><h3>Mit fog tartalmazni?</h3><ul><li>Fiókadatok kezelése: email, telefonszám, Apple/Facebook/Google belépés.</li><li>Hírhasználati adatok: mentések, előzmények, érdeklődési témák.</li><li>Helyi hírekhez használt hozzávetőleges helyadatok.</li><li>Előfizetési státusz kezelése az Apple vagy Google áruházon keresztül.</li></ul><p>A prototípus jelenleg nem küld valódi regisztrációs adatot külső szerverre.</p><button class="primary-button" data-auth-action="welcome">Vissza az üdvözlő oldalra</button></section>`);
   }
 
   function securitySheet(){
@@ -109,7 +119,7 @@
   function connectedSheet(){
     ensureAuthStyle();
     const auth=authState();
-    openSheet('Kapcsolt fiókok','Belépési módok',`<section class="auth-screen"><div class="settings-group"><div class="settings-row static-row"><span class="row-icon">f</span><span class="row-copy"><strong>Facebook</strong><small>${auth.provider==='Facebook'?'Kapcsolva':'Nincs kapcsolva'}</small></span></div><div class="settings-row static-row"><span class="row-icon">G</span><span class="row-copy"><strong>Google</strong><small>${auth.provider==='Google'?'Kapcsolva':'Nincs kapcsolva'}</small></span></div><div class="settings-row static-row"><span class="row-icon">@</span><span class="row-copy"><strong>Email / telefon</strong><small>${auth.email||auth.phone?'Beállítva':'Nincs beállítva'}</small></span></div></div></section>`);
+    openSheet('Kapcsolt fiókok','Belépési módok',`<section class="auth-screen"><div class="settings-group"><div class="settings-row static-row"><span class="row-icon"></span><span class="row-copy"><strong>Apple</strong><small>${auth.provider==='Apple'?'Kapcsolva':'Nincs kapcsolva'}</small></span></div><div class="settings-row static-row"><span class="row-icon">f</span><span class="row-copy"><strong>Facebook</strong><small>${auth.provider==='Facebook'?'Kapcsolva':'Nincs kapcsolva'}</small></span></div><div class="settings-row static-row"><span class="row-icon">G</span><span class="row-copy"><strong>Google</strong><small>${auth.provider==='Google'?'Kapcsolva':'Nincs kapcsolva'}</small></span></div><div class="settings-row static-row"><span class="row-icon">@</span><span class="row-copy"><strong>Email / telefon</strong><small>${auth.email||auth.phone?'Beállítva':'Nincs beállítva'}</small></span></div></div></section>`);
   }
 
   function plansSheet(){
@@ -119,7 +129,7 @@
 
   function resetSheet(){
     ensureAuthStyle();
-    openSheet('Prototípusadatok törlése','Első indítás újrajátszása',`<section class="auth-screen"><div class="reset-warning"><span class="auth-badge">↺</span><h1>Újrakezdjük a prototípust?</h1><p>Töröljük a mentett állapotot, majd megjelenik a regisztráció, az adatvédelmi elfogadás és az előfizetés-választó folyamat.</p></div><button class="danger-button" data-auth-action="confirm-reset-prototype">Törlés és első indítás indítása</button><button class="secondary-button" data-action="close-sheet">Mégsem</button></section>`);
+    openSheet('Prototípusadatok törlése','Első indítás újrajátszása',`<section class="auth-screen"><div class="reset-warning"><span class="auth-badge">↺</span><h1>Újrakezdjük a prototípust?</h1><p>Töröljük a mentett állapotot, majd megjelenik a brandelt nyitóképernyő, a regisztráció, az adatvédelmi elfogadás és az előfizetés-választó folyamat.</p></div><button class="danger-button" data-auth-action="confirm-reset-prototype">Törlés és első indítás indítása</button><button class="secondary-button" data-action="close-sheet">Mégsem</button></section>`);
   }
 
   function validatePrivacy(){
@@ -140,6 +150,7 @@
     const onboarding=onboardingState();
     if(onboarding.required){
       onboarding.authDone=true;
+      onboarding.introSeen=true;
       saveState();
       plansSheet();
       return;
@@ -167,6 +178,7 @@
     const onboarding=onboardingState();
     state.subscription={...(state.subscription||{}),status:'trial',plan:plan,trialDays:14,aiMinutesUsed:0,aiMinutesLimit:plan==='pro'?250:0,proPreviewAvailable:true,proPreviewRemaining:3,proPreviewActive:false};
     onboarding.required=false;
+    onboarding.introSeen=true;
     onboarding.authDone=true;
     onboarding.subscriptionDone=true;
     onboarding.completed=true;
@@ -182,7 +194,7 @@
   }
 
   function resetPrototypeData(){
-    const fresh={route:'car',sort:'latest',category:'fresh',theme:'system',mic:true,autoNext:true,playing:false,carIndex:0,assistantMode:'voice',read:[],saved:[],history:[],notifications:true,location:false,mobileData:true,subscription:{status:'inactive',plan:'basic',trialDays:14,aiMinutesUsed:0,aiMinutesLimit:0,proPreviewAvailable:true,proPreviewRemaining:3,proPreviewActive:false},auth:{loggedIn:false,name:'',email:'',phone:'',provider:'',twoFactor:false},onboarding:{required:true,authDone:false,subscriptionDone:false,privacyAccepted:false,proOfferAvailable:true,completed:false}};
+    const fresh={route:'car',sort:'latest',category:'fresh',theme:'system',mic:true,autoNext:true,playing:false,carIndex:0,assistantMode:'voice',read:[],saved:[],history:[],notifications:true,location:false,mobileData:true,subscription:{status:'inactive',plan:'basic',trialDays:14,aiMinutesUsed:0,aiMinutesLimit:0,proPreviewAvailable:true,proPreviewRemaining:3,proPreviewActive:false},auth:{loggedIn:false,name:'',email:'',phone:'',provider:'',twoFactor:false},onboarding:{required:true,introSeen:false,authDone:false,subscriptionDone:false,privacyAccepted:false,proOfferAvailable:true,completed:false}};
     localStorage.setItem(STORE,JSON.stringify(fresh));
     sessionStorage.removeItem(LAUNCH);
     toast('Prototípusadatok törölve');
@@ -202,14 +214,14 @@
     controls.before(card);
   }
 
-  function renderSettingsV2(){
+  function renderSettingsV3(){
     const items=settingsItems().map(function(item){return item[3]==='account'?['♙','Fiók és biztonság',statusLabel(),'account']:item;});
     setHeader('Beállítások');
     view.innerHTML=`<div class="settings-group subscription-entry">${settingRow(['✦','Előfizetés',subscriptionLabel(),'subscription'])}</div><div class="settings-group">${items.slice(0,4).map(settingRow).join('')}</div><div class="settings-group">${items.slice(4,7).map(settingRow).join('')}</div><div class="settings-group">${settingRow(items[7])}</div><div class="settings-group">${settingRow(['↺','Prototípusadatok törlése','Regisztráció és első indítás tesztelése','reset-prototype'])}</div>`;
   }
 
   if(typeof renderSettings==='function'){
-    renderSettings=renderSettingsV2;
+    renderSettings=renderSettingsV3;
   }
 
   if(typeof settingsSheet==='function'){
@@ -244,7 +256,7 @@
       event.preventDefault();
       event.stopImmediatePropagation();
       if(onboardingState().required){
-        registerSheet();
+        welcomeSheet();
         return;
       }
       safeStopSpeech(false);
@@ -293,8 +305,23 @@
       event.stopImmediatePropagation();
       const action=authAction.dataset.authAction;
       const auth=authState();
-      if(action==='login')loginSheet();
-      if(action==='register')registerSheet();
+      if(action==='welcome')welcomeSheet();
+      if(action==='choose-register'){
+        if(!validatePrivacy())return;
+        onboardingState().introSeen=true;
+        saveState();
+        registerSheet();
+      }
+      if(action==='login'){
+        onboardingState().introSeen=true;
+        saveState();
+        loginSheet();
+      }
+      if(action==='register'){
+        onboardingState().introSeen=true;
+        saveState();
+        registerSheet();
+      }
       if(action==='privacy')privacySheet();
       if(action==='forgot')forgotSheet();
       if(action==='start-login'){
@@ -327,15 +354,17 @@
         completeAuth();
       }
       if(action==='resend-2fa')toast('Új kód elküldve a prototípusban');
-      if(action==='social-facebook'||action==='social-google'){
+      if(action==='social-apple'||action==='social-facebook'||action==='social-google'){
         if(onboardingState().required&&!validatePrivacy())return;
+        const provider=action==='social-apple'?'Apple':action==='social-facebook'?'Facebook':'Google';
         auth.loggedIn=true;
-        auth.name=action==='social-facebook'?'Facebook felhasználó':'Google felhasználó';
-        auth.email=action==='social-facebook'?'facebook@hirbeszed.hu':'google@hirbeszed.hu';
-        auth.provider=action==='social-facebook'?'Facebook':'Google';
+        auth.name=provider+' felhasználó';
+        auth.email=provider.toLowerCase()+'@hirbeszed.hu';
+        auth.provider=provider;
         auth.twoFactor=false;
+        onboardingState().introSeen=true;
         saveState();
-        toast(auth.provider+' belépés kész');
+        toast(provider+' belépés kész');
         completeAuth();
       }
       if(action==='send-reset'){
@@ -379,7 +408,8 @@
       state.mic=true;
       saveState();
       if(onboarding.authDone&&!onboarding.subscriptionDone)plansSheet();
-      else registerSheet();
+      else if(onboarding.introSeen)registerSheet();
+      else welcomeSheet();
       return;
     }
     if(authState().loggedIn&&isSubscriptionReady()&&!sessionStorage.getItem(LAUNCH)){
