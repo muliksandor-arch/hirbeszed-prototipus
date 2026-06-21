@@ -1,0 +1,16 @@
+{
+  "name":"Hírbeszéd prototípus",
+  "short_name":"Hírbeszéd",
+  "description":"RSS hírolvasó és hangvezérelt autós mód prototípusa",
+  "start_url":"./",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#0D191E",
+  "theme_color":"#0D191E",
+  "lang":"hu",
+  "icons":[
+    {"src":"assets/brand/hirbeszed-app-icon-light.svg","sizes":"any","type":"image/svg+xml","purpose":"any"},
+    {"src":"assets/brand/hirbeszed-app-icon-dark.svg","sizes":"any","type":"image/svg+xml","purpose":"maskable"}
+  ]
+}
+
