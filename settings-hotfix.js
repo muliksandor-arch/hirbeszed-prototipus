@@ -1,4 +1,27 @@
 (function(){
+  function patchCarControls(){
+    const controls=document.querySelector('.car-controls');
+    if(!controls)return;
+    const mic=controls.querySelector('[data-car="mic"]');
+    const play=controls.querySelector('[data-car="play"]');
+    const auto=controls.querySelector('[data-car="auto"]');
+    if(!mic||!play||!auto)return;
+    const autoActive=!auto.classList.contains('off');
+    auto.innerHTML=`<strong>⇥</strong>${autoActive?'Hírléptető aktív':'Hírléptető kikapcsolt'}`;
+    controls.append(mic,play,auto);
+  }
+
+  if(typeof renderCar==='function'&&!renderCar.__carControlPatch){
+    const originalRenderCar=renderCar;
+    renderCar=function(...args){
+      const result=originalRenderCar.apply(this,args);
+      patchCarControls();
+      return result;
+    };
+    renderCar.__carControlPatch=true;
+    patchCarControls();
+  }
+
   document.addEventListener('click',event=>{
     const themeButton=event.target.closest('button[data-theme]');
     if(!themeButton&&document.documentElement.hasAttribute('data-theme')){
