@@ -1,0 +1,13 @@
+.chips{scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain}
+.chip{flex:0 0 auto}
+.topic-strip{margin-left:-16px;margin-right:-16px;padding:0 16px 5px;scroll-padding-inline:16px}
+.settings-intro{font-size:11px;line-height:17px;color:var(--muted);margin:0 0 12px}
+.topic-settings-strip{margin-bottom:13px}
+.topic-settings-list .settings-row{min-height:66px}
+.topic-settings-list .row-copy small{line-height:14px}
+.topic-settings-list .fixed-topic{cursor:default}
+.topic-settings-list .fixed-topic .toggle{opacity:.65}
+.section-label{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:4px 2px 9px}
+.source-form{padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:18px}
+.source-form label{display:block;font-size:11px;font-weight:760;margin:0 0 8px}
+.source-form .search-input{margin-bottom:10px}
