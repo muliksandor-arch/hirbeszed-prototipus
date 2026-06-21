@@ -1,10 +1,12 @@
 (function(){
   function ensureCarHotfixStyle(){
-    if(document.getElementById('carHotfixStyle'))return;
-    const style=document.createElement('style');
-    style.id='carHotfixStyle';
-    style.textContent='.skip-icon{position:relative;display:block;width:30px;height:24px;margin:0 auto 3px;color:var(--text)}.skip-icon svg{width:100%;height:100%;display:block;fill:currentColor}.skip-icon .skip-bar{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round}.skip-icon.off{color:var(--muted)}.skip-icon.off:after{content:"";position:absolute;left:1px;right:1px;top:50%;height:3px;border-radius:3px;background:var(--coral);transform:rotate(-28deg);box-shadow:0 0 0 1px color-mix(in srgb,var(--surface) 72%,transparent)}.car-status{padding:14px 6px 12px}.wave{height:62px;display:flex;justify-content:center;align-items:center;gap:7px;margin:10px auto 0}.wave i{width:8px;height:18px;border-radius:999px;background:var(--voice);box-shadow:0 0 16px color-mix(in srgb,var(--voice) 34%,transparent);animation:wave 1s ease-in-out infinite;transform-origin:center}.wave i:nth-child(1),.wave i:nth-child(7){height:16px;opacity:.74}.wave i:nth-child(2),.wave i:nth-child(6){height:31px}.wave i:nth-child(3),.wave i:nth-child(5){height:46px}.wave i:nth-child(4){height:58px;background:var(--coral);box-shadow:0 0 18px color-mix(in srgb,var(--coral) 42%,transparent)}.wave i:nth-child(2){animation-delay:.08s}.wave i:nth-child(3){animation-delay:.16s}.wave i:nth-child(4){animation-delay:.24s}.wave i:nth-child(5){animation-delay:.32s}.wave i:nth-child(6){animation-delay:.4s}.wave i:nth-child(7){animation-delay:.48s}.wave.paused i{animation:none;height:18px;opacity:.72;box-shadow:none}';
-    document.head.appendChild(style);
+    let style=document.getElementById('carHotfixStyle');
+    if(!style){
+      style=document.createElement('style');
+      style.id='carHotfixStyle';
+      document.head.appendChild(style);
+    }
+    style.textContent='.skip-icon{position:relative;display:block;width:30px;height:24px;margin:0 auto 3px;color:var(--text)}.skip-icon svg{width:100%;height:100%;display:block;fill:currentColor}.skip-icon .skip-bar{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round}.skip-icon.off{color:var(--muted)}.skip-icon.off:after{content:"";position:absolute;left:1px;right:1px;top:50%;height:3px;border-radius:3px;background:var(--coral);transform:rotate(-28deg);box-shadow:0 0 0 1px color-mix(in srgb,var(--surface) 72%,transparent)}.car-status{padding:18px 6px 16px}.car-status .status-label{display:none!important}.wave{height:92px;display:flex;justify-content:center;align-items:center;gap:9px;margin:14px auto 0}.wave i{width:10px;height:28px;border-radius:999px;background:var(--voice);box-shadow:0 0 18px color-mix(in srgb,var(--voice) 34%,transparent);animation:wave .9s ease-in-out infinite;transform-origin:center}.wave i:nth-child(1){height:26px;opacity:.72}.wave i:nth-child(2){height:54px;background:var(--coral);box-shadow:0 0 20px color-mix(in srgb,var(--coral) 44%,transparent);animation-delay:.06s}.wave i:nth-child(3){height:76px;animation-delay:.12s}.wave i:nth-child(4){height:92px;animation-delay:.18s}.wave i:nth-child(5){height:68px;background:var(--coral);box-shadow:0 0 20px color-mix(in srgb,var(--coral) 44%,transparent);animation-delay:.24s}.wave i:nth-child(6){height:88px;animation-delay:.3s}.wave i:nth-child(7){height:58px;animation-delay:.36s}.wave i:nth-child(8){height:78px;background:var(--coral);box-shadow:0 0 20px color-mix(in srgb,var(--coral) 44%,transparent);animation-delay:.42s}.wave i:nth-child(9){height:30px;opacity:.76;animation-delay:.48s}.wave.paused i{animation:none;opacity:.72;box-shadow:none}.wave.paused i:nth-child(1),.wave.paused i:nth-child(9){height:22px}.wave.paused i:nth-child(2),.wave.paused i:nth-child(8){height:32px}.wave.paused i:nth-child(3),.wave.paused i:nth-child(7){height:42px}.wave.paused i:nth-child(4),.wave.paused i:nth-child(6){height:52px}.wave.paused i:nth-child(5){height:38px}';
   }
 
   function skipIcon(active=true){
@@ -24,9 +26,9 @@
     controls.append(mic,play,auto);
 
     const status=document.querySelector('.car-status .status-label');
-    if(status)status.textContent=state.playing?'● FELOLVASÁS':'Ⅱ KÉSZEN ÁLL';
+    if(status)status.remove();
     const wave=document.querySelector('.car-status .wave');
-    if(wave&&wave.children.length<7)wave.innerHTML='<i></i><i></i><i></i><i></i><i></i><i></i><i></i>';
+    if(wave&&wave.children.length!==9)wave.innerHTML='<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>';
   }
 
   if(typeof renderCar==='function'&&!renderCar.__carControlPatch){
