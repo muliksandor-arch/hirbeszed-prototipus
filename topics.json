@@ -1,0 +1,22 @@
+[
+  {"id":"fresh","name":"Friss","description":"Legfrissebb és vezető hírek"},
+  {"id":"domestic","name":"Belföld","description":"Magyar közélet, politika és társadalom"},
+  {"id":"foreign","name":"Külföld","description":"Nemzetközi hírek, EU, világpolitika"},
+  {"id":"economy","name":"Gazdaság","description":"Infláció, árak, forint, cégek és ipar"},
+  {"id":"money","name":"Pénz","description":"Adózás, bank, hitel, nyugdíj és bérek"},
+  {"id":"business","name":"Vállalkozás","description":"KKV, pályázatok, támogatások és üzleti trendek"},
+  {"id":"tech_ai","name":"Tech & AI","description":"Mesterséges intelligencia, technológia és kiberbiztonság"},
+  {"id":"weather","name":"Időjárás","description":"Előrejelzés, riasztások és időjárási események"},
+  {"id":"traffic","name":"Közlekedés","description":"Útinform, balesetek, tömegközlekedés és üzemanyagár"},
+  {"id":"real_estate","name":"Ingatlan","description":"Lakásárak, albérlet, lakáshitel és építőipar"},
+  {"id":"career","name":"Munka","description":"Álláspiac, karrier, HR és munkajog"},
+  {"id":"health","name":"Egészség","description":"Egészségügy, gyógyszer, életmód és járványok"},
+  {"id":"education","name":"Oktatás","description":"Iskola, egyetem, felvételi és érettségi"},
+  {"id":"sport","name":"Sport","description":"Foci, Forma–1, kézilabda, olimpia és magyar sport"},
+  {"id":"culture","name":"Kultúra","description":"Film, zene, könyv, színház és programok"},
+  {"id":"tabloid","name":"Bulvár","description":"Celebek, TV, szórakozás és könnyed hírek"},
+  {"id":"auto","name":"Autó","description":"Autópiac, elektromos autók, KRESZ és bírságok"},
+  {"id":"green","name":"Zöld","description":"Környezet, klíma, energia és fenntarthatóság"},
+  {"id":"law","name":"Jog","description":"Törvények, rendeletek, fogyasztóvédelem és adatvédelem"},
+  {"id":"local","name":"Helyi","description":"Budapest, vármegyék, városi és helyi hírek"}
+]
