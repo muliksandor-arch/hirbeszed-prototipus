@@ -9,7 +9,7 @@
   --accent:#53B8AA; --voice:#2F8178; --text:#EDF5F3; --muted:#9FB1B4;
   --border:#284048; --shadow:0 12px 34px rgba(0,0,0,.32);
 }
-*{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:#DDE8E5;color:var(--text)}
+*{box-sizing:border-box} html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:Inter,Segoe UI,Arial,sans-serif;background:#DDE8E5;color:var(--text)}
 button,input{font:inherit} button{cursor:pointer}.prototype-note{height:34px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#4F6268;background:#EAF1EF}
 .phone-shell{position:relative;width:min(100%,430px);height:calc(100dvh - 34px);min-height:620px;margin:0 auto;background:var(--bg);color:var(--text);overflow:hidden;box-shadow:var(--shadow)}
 .topbar{height:calc(76px + var(--safe-top));padding:calc(12px + var(--safe-top)) 18px 10px;display:flex;align-items:center;justify-content:space-between;background:color-mix(in srgb,var(--bg) 92%,transparent);border-bottom:1px solid color-mix(in srgb,var(--border) 72%,transparent);position:relative;z-index:5}
@@ -30,5 +30,7 @@ button,input{font:inherit} button{cursor:pointer}.prototype-note{height:34px;dis
 @media(min-width:700px){body{padding:22px 0}.prototype-note{width:430px;margin:0 auto;border-radius:18px 18px 0 0}.phone-shell{height:min(860px,calc(100dvh - 78px));border-radius:0 0 30px 30px}.phone-shell:before{content:"";position:absolute;inset:0;border:1px solid rgba(17,39,45,.12);border-radius:0 0 30px 30px;pointer-events:none;z-index:40}}
 @media(max-width:699px){.prototype-note{display:none}.phone-shell{height:100dvh;max-width:none}.view{height:calc(100% - 76px - 72px - var(--safe-top) - var(--safe-bottom))}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
-.sheet{pointer-events:none;visibility:hidden}.sheet.open{pointer-events:auto;visibility:visible}
+.sheet{display:none;transform:none;transition:none;pointer-events:none;visibility:hidden}.sheet.open{display:flex;transform:none;pointer-events:auto;visibility:visible}
+@media(max-width:1099px),(hover:none),(pointer:coarse){body{padding:0}.prototype-note{display:none}.phone-shell{width:100%;max-width:none;height:100dvh;min-height:100dvh;margin:0;border-radius:0;box-shadow:none}.phone-shell:before{display:none}.view{height:calc(100% - 76px - 72px - var(--safe-top) - var(--safe-bottom))}}
+.sheet-back-button{width:48px;height:48px;min-width:48px;font-size:25px;font-weight:800;touch-action:manipulation}
 
