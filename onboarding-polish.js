@@ -418,17 +418,26 @@
     }
   });
 
-  const observer=new MutationObserver(()=>{
+  let polishScheduled=false;
+  function runPolishPass(){
+    polishScheduled=false;
     ensurePolishStyle();
-    normalizeText();
+    normalizeText(document.getElementById('sheet')||document.body);
+    normalizeText(document.getElementById('subscriptionGate'));
     maybeReplaceOldPlans();
+  }
+
+  const observer=new MutationObserver(()=>{
+    if(polishScheduled)return;
+    polishScheduled=true;
+    requestAnimationFrame(runPolishPass);
   });
 
   function boot(){
     ensurePolishStyle();
     normalizeText();
     patchState240();
-    observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+    observer.observe(document.body,{subtree:true,childList:true});
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);
