@@ -11,11 +11,13 @@ const defaults = {
   route:'car', sort:'latest', category:'Mind', theme:'system', mic:true, autoNext:true,
   playing:false, carIndex:0, assistantMode:'voice', read:[], saved:[], history:[],
   sources:{HVG:true,Portfolio:true,Qubit:true,'Nemzeti Sport':true,Telex:true,'24.hu':true},
-  notifications:true, location:false, mobileData:true
+  notifications:true, location:false, mobileData:true,
+  subscription:{status:'inactive',plan:'pro',trialDays:14,aiMinutesUsed:0,aiMinutesLimit:250,proPreviewAvailable:true,proPreviewRemaining:3,proPreviewActive:false}
 };
 
 const state = Object.assign({}, defaults, JSON.parse(localStorage.getItem('hirbeszed-state') || '{}'));
 state.read = new Set(state.read || []); state.saved = new Set(state.saved || []); state.history = state.history || [];
+state.subscription = {...defaults.subscription,...(state.subscription || {})};
 let currentUtterance = null; let toastTimer = null; let activeSheetRenderer = null;
 const $ = selector => document.querySelector(selector);
 const view = $('#view'); const sheet = $('#sheet'); const sheetBody = $('#sheetBody');
@@ -68,14 +70,25 @@ function speakCurrent(details=false){
   speechSynthesis.cancel();
   currentUtterance=new SpeechSynthesisUtterance(`${article.source}. ${article.title}. ${details?article.body:article.excerpt}`);
   currentUtterance.lang='hu-HU'; currentUtterance.rate=1; state.playing=true; renderCar();
-  currentUtterance.onend=()=>{ recordRead(article.id); state.playing=false; if(state.autoNext&&state.route==='car'){setTimeout(()=>nextArticle(true),700)}else renderCar(); };
+  currentUtterance.onend=()=>{ recordRead(article.id); state.playing=false; const previewFinished=consumeProPreviewArticle(); if(previewFinished){renderCar();setTimeout(()=>proPreviewUpsell(),350);return;} if(state.autoNext&&state.route==='car'){setTimeout(()=>nextArticle(true),700)}else renderCar(); };
   currentUtterance.onerror=()=>{state.playing=false;renderCar();}; speechSynthesis.speak(currentUtterance);
 }
 function nextArticle(auto=false){ recordRead(currentCarArticle().id); state.carIndex=(state.carIndex+1)%articles.length; saveState(); renderCar(); if(auto||state.playing) setTimeout(()=>speakCurrent(),250); }
+function consumeProPreviewArticle(){
+  const sub=state.subscription;
+  if(sub.plan!=='basic'||!sub.proPreviewActive) return false;
+  sub.proPreviewRemaining=Math.max(0,sub.proPreviewRemaining-1);
+  if(sub.proPreviewRemaining===0){sub.proPreviewActive=false;sub.proPreviewAvailable=false;saveState();return true;}
+  saveState(); return false;
+}
+function proPreviewUpsell(){
+  openSheet('Ilyen a Hírbeszéd Pro','A heti három próbahír véget ért',`<section class="subscription-screen"><div class="expired-hero"><span class="expired-icon">✦</span><span class="subscription-kicker">PRO HANGPRÓBA</span><h1>Hallható a különbség.</h1><p>A Pro csomag természetesebb felolvasást és havi 250 perc prémium AI-hangot biztosít.</p></div><button class="primary-button coral-button" data-subscribe="pro">Váltás Pro csomagra · 3500 Ft/hó</button><button class="text-button" data-action="close-sheet">Maradok az Alap csomagnál</button></section>`);
+}
 function renderCar(){
-  setHeader('Autós mód',iconButton('⋯','További lehetőségek','car-more')); const article=currentCarArticle();
+  setHeader('Autós mód',iconButton('⋯','További lehetőségek','car-more')); const article=currentCarArticle(); const sub=state.subscription; const showProSample=sub.plan==='basic'&&sub.status==='active'&&sub.proPreviewAvailable;
   view.innerHTML=`<section class="car-view"><div class="car-image-wrap"><img class="article-image" src="${article.image}" alt="${article.title}"><span class="car-badge">${article.category}</span></div>
-    <div class="car-status"><div class="status-label">${state.playing?'● FELOLVASÁS':'Ⅱ KÉSZEN ÁLL'}</div><h1>${article.title}</h1><p>${article.source} · ${article.time}</p><div class="wave ${state.playing?'':'paused'}"><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div class="car-status"><div class="status-label">${sub.proPreviewActive?`✦ PRO HANGPRÓBA · ${sub.proPreviewRemaining} HÍR`:state.playing?'● FELOLVASÁS':'Ⅱ KÉSZEN ÁLL'}</div><h1>${article.title}</h1><p>${article.source} · ${article.time}</p><div class="wave ${state.playing?'':'paused'}"><i></i><i></i><i></i><i></i><i></i></div></div>
+    ${showProSample?`<button class="pro-sample-card" data-car="pro-preview"><span class="pro-sample-icon">✦</span><span><strong>Próbáld ki a Pro hangot</strong><small>Heti 3 hír természetesebb AI-felolvasással</small></span><b>${sub.proPreviewRemaining} hír ›</b></button>`:''}
     <div class="car-controls"><button class="car-control mic ${state.mic?'':'off'}" data-car="mic"><strong>${state.mic?'◉':'⊘'}</strong>${state.mic?'Mikrofon':'Mikrofon ki'}</button><button class="car-control ${state.autoNext?'':'off'}" data-car="auto"><strong>⇥</strong>Auto: ${state.autoNext?'be':'ki'}</button><button class="car-control" data-car="play"><strong>${state.playing?'■':'▶'}</strong>${state.playing?'Leállítás':'Felolvasás'}</button></div>
     <p class="car-help">Mondd: „részletek”, „mentsd el” vagy „következő”</p></section>`;
 }
@@ -96,18 +109,37 @@ function renderAssistant(){
   }
 }
 
-const settingsItems=[
-  ['◉','RSS-források','6 bekapcsolva','sources'],['#','Témák és érdeklődés','7 kiválasztva','topics'],['🔔','Értesítések',state.notifications?'Bekapcsolva':'Kikapcsolva','notifications'],['◐','Megjelenés',state.theme==='system'?'Rendszer szerint':state.theme==='dark'?'Sötét':'Világos','appearance'],['◉','Hang és autós mód','Magyar hang · 1,0×','voice'],['⇅','Mobiladat és tárhely',state.mobileData?'Mobilnet engedélyezve':'Csak Wi-Fi','data'],['⌖','Helyi hírek',state.location?'Budapest környéke':'Kikapcsolva','location'],['♙','Fiók és biztonság','Prototípus-fiók','account']
-];
+function subscriptionLabel(){
+  const sub=state.subscription;
+  if(sub.status==='trial') return `${sub.plan==='pro'?'Pro':'Alap'} próba · ${sub.trialDays} nap van hátra`;
+  if(sub.status==='active') return `${sub.plan==='pro'?'Pro':'Alap'} · aktív`;
+  if(sub.status==='expired') return 'A próbaidő lejárt';
+  return '14 nap ingyen · utána 1500 Ft-tól';
+}
+function settingsItems(){
+  return [
+    ['◉','RSS-források','6 bekapcsolva','sources'],['#','Témák és érdeklődés','7 kiválasztva','topics'],['🔔','Értesítések',state.notifications?'Bekapcsolva':'Kikapcsolva','notifications'],['◐','Megjelenés',state.theme==='system'?'Rendszer szerint':state.theme==='dark'?'Sötét':'Világos','appearance'],['◉','Hang és autós mód','Magyar hang · 1,0×','voice'],['⇅','Mobiladat és tárhely',state.mobileData?'Mobilnet engedélyezve':'Csak Wi-Fi','data'],['⌖','Helyi hírek',state.location?'Budapest környéke':'Kikapcsolva','location'],['♙','Fiók és biztonság','Prototípus-fiók','account']
+  ];
+}
 function renderSettings(){
-  setHeader('Beállítások'); view.innerHTML=`<div class="settings-group">${settingsItems.slice(0,4).map(settingRow).join('')}</div><div class="settings-group">${settingsItems.slice(4,7).map(settingRow).join('')}</div><div class="settings-group">${settingRow(settingsItems[7])}</div>`;
+  const items=settingsItems();
+  setHeader('Beállítások'); view.innerHTML=`<div class="settings-group subscription-entry">${settingRow(['✦','Előfizetés',subscriptionLabel(),'subscription'])}</div><div class="settings-group">${items.slice(0,4).map(settingRow).join('')}</div><div class="settings-group">${items.slice(4,7).map(settingRow).join('')}</div><div class="settings-group">${settingRow(items[7])}</div>`;
 }
 function settingRow(item){return `<button class="settings-row" data-setting="${item[3]}"><span class="row-icon">${item[0]}</span><span class="row-copy"><strong>${item[1]}</strong><small>${item[2]}</small></span><span class="row-end">›</span></button>`;}
 
 function render(){
   stopSpeech(false); document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.route===state.route));
   ({feed:renderFeed,car:renderCar,assistant:renderAssistant,settings:renderSettings}[state.route]||renderCar)();
-  view.scrollTop=0; saveState();
+  view.scrollTop=0; saveState(); renderSubscriptionGate();
+}
+function renderSubscriptionGate(){
+  const gate=$('#subscriptionGate'); if(!gate)return;
+  const failed=state.subscription.status==='payment_failed'; const locked=failed||state.subscription.status==='expired';
+  gate.classList.toggle('open',locked); gate.setAttribute('aria-hidden',locked?'false':'true');
+  $('#gateKicker').textContent=failed?'FIZETÉSI PROBLÉMA':'AZ ELŐFIZETÉS LEJÁRT';
+  $('#gateTitle').textContent=failed?'A fizetést nem sikerült megújítani.':'Válassz csomagot a folytatáshoz.';
+  $('#gateCopy').textContent=failed?'Az áruházi türelmi idő lejárt. A mentéseid és beállításaid megmaradtak.':'A mentéseid és beállításaid megmaradtak, és előfizetés után azonnal folytathatod.';
+  if(locked){stopSpeech(false);sheet.classList.remove('open');sheet.setAttribute('aria-hidden','true');}
 }
 
 function openSheet(title,subtitle,html,renderer=null){ $('#sheetTitle').textContent=title; $('#sheetSubtitle').textContent=subtitle||''; sheetBody.innerHTML=html; activeSheetRenderer=renderer; sheet.classList.add('open'); sheet.setAttribute('aria-hidden','false'); }
@@ -120,7 +152,41 @@ function librarySheet(tab='saved'){
   const ids=tab==='saved'?[...state.saved]:state.history; const items=ids.map(articleById).filter(Boolean);
   openSheet('Könyvtár',tab==='saved'?'Mentett hírek':'Előzmények',`<div class="sheet-tabs"><button data-library="saved" class="${tab==='saved'?'active':''}">Mentett</button><button data-library="history" class="${tab==='history'?'active':''}">Előzmények</button></div><div>${items.length?items.map(a=>articleCard(a,true)).join(''):`<div class="empty"><div class="empty-icon">♡</div><h2>Még nincs itt semmi</h2><p>A hírkártyák könyvjelzőjével menthetsz későbbre.</p></div>`}</div>`,()=>librarySheet(tab));
 }
+function planName(plan){return plan==='pro'?'Hírbeszéd Pro':'Hírbeszéd Alap';}
+function planPrice(plan){return plan==='pro'?'3500 Ft':'1500 Ft';}
+function planCards(){
+  const selected=state.subscription.plan;
+  return `<div class="plan-list">
+    <button class="plan-card ${selected==='basic'?'selected':''}" data-plan="basic">
+      <span class="plan-check">${selected==='basic'?'✓':''}</span>
+      <span class="plan-copy"><span class="plan-title">Hírbeszéd Alap</span><span class="plan-price">1500 Ft <small>/ hó</small></span><span class="plan-description">Korlátlan rendszerhang, autós mód és AI-asszisztens.</span><span class="plan-features">✓ Rendszerhangos felolvasás<br>✓ Hangvezérlés és személyre szabás<br>✓ Alap AI-hírasszisztens</span></span>
+    </button>
+    <button class="plan-card pro ${selected==='pro'?'selected':''}" data-plan="pro">
+      <span class="popular-badge">AJÁNLOTT</span><span class="plan-check">${selected==='pro'?'✓':''}</span>
+      <span class="plan-copy"><span class="plan-title">Hírbeszéd Pro</span><span class="plan-price">3500 Ft <small>/ hó</small></span><span class="plan-description">Természetes AI-hang és fejlettebb, beszélgetős asszisztens.</span><span class="plan-features">✓ Minden az Alap csomagból<br>✓ Havi 250 perc prémium AI-hang<br>✓ Fejlettebb összefoglalók és hangok</span></span>
+    </button>
+  </div>`;
+}
+function subscriptionSheet(screen='overview'){
+  const sub=state.subscription;
+  if(screen==='plans'||(screen==='overview'&&sub.status==='inactive')){
+    return openSheet('Prémium csomagok','14 napos ingyenes próba',`<section class="subscription-screen"><div class="subscription-hero"><span class="subscription-kicker">14 NAP INGYEN</span><h1>A hírek akkor is veled maradnak, amikor nem nézed a képernyőt.</h1><p>Válassz csomagot. A próba alatt nem terhelünk díjat, utána az alkalmazás-áruház havonta megújítja az előfizetést.</p></div>${planCards()}<button class="primary-button coral-button" data-sub-action="review">14 napos próba indítása</button><button class="text-button" data-sub-action="restore">Korábbi vásárlás visszaállítása</button><p class="legal-copy">Bármikor lemondható az Apple App Store vagy a Google Play előfizetési beállításaiban.</p></section>`);
+  }
+  if(screen==='confirm'){
+    return openSheet('Próba indítása','Az áruház még nem terhel díjat',`<section class="subscription-screen"><div class="purchase-summary"><span class="summary-icon">✦</span><span class="subscription-kicker">KIVÁLASZTOTT CSOMAG</span><h1>${planName(sub.plan)}</h1><div class="summary-price">${planPrice(sub.plan)} <small>/ hó</small></div><div class="timeline"><div><strong>Ma</strong><span>14 napos próba indul</span></div><div><strong>11. nap</strong><span>Emlékeztetőt küldünk</span></div><div><strong>14. nap után</strong><span>${planPrice(sub.plan)} havonta</span></div></div></div><button class="primary-button coral-button" data-sub-action="start-trial">Próba megerősítése</button><button class="secondary-button" data-sub-action="plans">Másik csomagot választok</button><p class="store-note">A végleges alkalmazásban itt az Apple vagy a Google biztonságos fizetési ablaka jelenik meg.</p></section>`);
+  }
+  if(sub.status==='expired'){
+    return openSheet('A próbaidő lejárt','Válassz csomagot a folytatáshoz',`<section class="subscription-screen"><div class="expired-hero"><span class="expired-icon">Ⅱ</span><span class="subscription-kicker">A PRÓBA VÉGET ÉRT</span><h1>Tartsd mozgásban a hírfolyamot.</h1><p>A mentéseid és beállításaid megmaradtak. Előfizetés után azonnal folytathatod.</p></div><button class="price-action" data-subscribe="basic"><span><strong>Hírbeszéd Alap</strong><small>Rendszerhang és autós mód</small></span><b>1500 Ft/hó</b></button><button class="price-action pro" data-subscribe="pro"><span><strong>Hírbeszéd Pro</strong><small>250 perc prémium AI-hang</small></span><b>3500 Ft/hó</b></button><button class="text-button" data-sub-action="restore">Vásárlás visszaállítása</button></section>`);
+  }
+  const isPro=sub.plan==='pro'; const percent=isPro?Math.min(100,Math.round((sub.aiMinutesUsed/sub.aiMinutesLimit)*100)):0;
+  return openSheet('Előfizetés','Csomag és használat kezelése',`<section class="subscription-screen"><div class="membership-card ${isPro?'pro':''}"><div class="membership-top"><span class="subscription-kicker">${sub.status==='trial'?'PRÓBAIDŐ':'AKTÍV ELŐFIZETÉS'}</span><span class="status-pill">${sub.status==='trial'?`${sub.trialDays} nap`:'Aktív'}</span></div><h1>${planName(sub.plan)}</h1><p>${sub.status==='trial'?`A próba után ${planPrice(sub.plan)}/hó.`:`Következő megújítás: július 21.`}</p>${isPro?`<button class="usage-panel" data-sub-action="usage"><span><strong>Prémium AI-hang</strong><small>${sub.aiMinutesUsed} / ${sub.aiMinutesLimit} perc felhasználva</small></span><span>${sub.aiMinutesLimit-sub.aiMinutesUsed} perc</span><i><b style="width:${percent}%"></b></i></button>`:`<div class="basic-voice-note">A rendszerhangos felolvasás korlátlan. Hetente három híren kipróbálható a Pro hang.</div>`}</div><div class="settings-group subscription-actions"><button class="settings-row" data-sub-action="plans"><span class="row-icon">⇄</span><span class="row-copy"><strong>Csomagváltás</strong><small>Alap vagy Pro csomag választása</small></span><span class="row-end">›</span></button><button class="settings-row" data-sub-action="store-manage"><span class="row-icon">▣</span><span class="row-copy"><strong>Előfizetés kezelése</strong><small>Megújítás vagy lemondás az áruházban</small></span><span class="row-end">›</span></button><button class="settings-row" data-sub-action="restore"><span class="row-icon">↺</span><span class="row-copy"><strong>Vásárlás visszaállítása</strong><small>Másik készüléken vásárolt csomag</small></span><span class="row-end">›</span></button></div><button class="demo-link" data-sub-action="expire-demo">Prototípus: lejárt előfizetés</button><button class="demo-link" data-sub-action="payment-demo">Prototípus: sikertelen fizetés</button></section>`);
+}
+function usageSheet(){
+  const sub=state.subscription; const remaining=Math.max(0,sub.aiMinutesLimit-sub.aiMinutesUsed);
+  openSheet('Prémium AI-hang','Havi Pro hangkeret',`<section class="subscription-screen"><div class="minutes-ring" style="--usage:${Math.round((sub.aiMinutesUsed/sub.aiMinutesLimit)*360)}deg"><div><strong>${remaining}</strong><span>perc maradt</span></div></div><h2 class="center-title">Természetes AI-felolvasás</h2><p class="center-copy">A keret minden számlázási időszak elején újra 250 perc lesz. Ha elfogy, a hírek automatikusan a készülék rendszerhangján folytatódnak.</p><div class="settings-group"><div class="settings-row static-row"><span class="row-icon">▶</span><span class="row-copy"><strong>${sub.aiMinutesUsed} perc felhasználva</strong><small>Ebben a hónapban</small></span></div><div class="settings-row static-row"><span class="row-icon">↻</span><span class="row-copy"><strong>Július 21-én megújul</strong><small>Újabb 250 perc válik elérhetővé</small></span></div></div><button class="secondary-button" data-sub-action="subscription-home">Vissza az előfizetéshez</button></section>`);
+}
 function settingsSheet(type){
+  if(type==='subscription') return subscriptionSheet();
   if(type==='appearance') return openSheet('Megjelenés','Téma és hozzáférhetőség',`<div class="theme-grid"><button class="theme-card ${state.theme==='light'?'active':''}" data-theme="light">Világos</button><button class="theme-card dark-preview ${state.theme==='dark'?'active':''}" data-theme="dark">Sötét</button><button class="theme-card system-preview ${state.theme==='system'?'active':''}" data-theme="system">Rendszer</button></div><div class="settings-group" style="margin-top:15px">${settingRow(['A','Betűméret','Rendszer szerint','font'])}${settingRow(['◌','Kontraszt növelése','Kikapcsolva','contrast'])}</div>`);
   if(type==='sources') return openSheet('RSS-források','Közvetlenül a készüléken',`<button class="primary-button" data-add-source>＋ Új RSS-forrás</button><div class="settings-group" style="margin-top:13px">${Object.entries(state.sources).map(([name,on])=>`<button class="settings-row" data-source="${name}"><span class="row-icon">${name[0]}</span><span class="row-copy"><strong>${name}</strong><small>${on?'Bekapcsolva':'Kikapcsolva'}</small></span><span class="toggle ${on?'on':''}"></span></button>`).join('')}</div>`);
   if(type==='topics') return openSheet('Témák és érdeklődés','A sorrend helyben készül',`<div class="chips" style="flex-wrap:wrap">${['Belföld','Világhírek','Gazdaság','Sport','Technológia','Kultúra','Helyi hírek'].map(c=>`<button class="chip active">${c}</button>`).join('')}</div><div class="settings-group">${settingRow(['✦','Személyre szabott sorrend','Bekapcsolva','personal'])}${settingRow(['↺','Érdeklődési profil törlése','A mentések megmaradnak','reset-profile'])}</div>`);
@@ -139,10 +205,13 @@ document.addEventListener('click',event=>{
   const sort=event.target.closest('[data-sort]'); if(sort){state.sort=sort.dataset.sort;renderFeed();saveState();return;}
   const category=event.target.closest('[data-category]'); if(category){state.category=category.dataset.category;renderFeed();saveState();return;}
   const action=event.target.closest('[data-action]'); if(action){const a=action.dataset.action;if(a==='close-sheet'){closeSheet();return;}if(a==='search')searchSheet();if(a==='library')librarySheet();if(a==='assistant-toggle'){state.assistantMode=state.assistantMode==='voice'?'text':'voice';renderAssistant();}if(a==='voice-demo')toast('Hangmód prototípus: mondd el a kérdésed');if(a==='car-more')openSheet('Hangutasítások','Autós mód',`<div class="settings-group">${settingRow(['›','Következő','A következő hír indítása','cmd-next'])}${settingRow(['＋','Részletek','Hosszabb RSS-tartalom','cmd-detail'])}${settingRow(['♡','Mentés','Mentés későbbre','cmd-save'])}</div>`);return;}
-  const car=event.target.closest('[data-car]'); if(car){if(car.dataset.car==='mic'){state.mic=!state.mic;toast(state.mic?'Mikrofon bekapcsolva':'Mikrofon kikapcsolva');renderCar();}if(car.dataset.car==='auto'){state.autoNext=!state.autoNext;renderCar();}if(car.dataset.car==='play'){state.playing?stopSpeech():speakCurrent();}saveState();return;}
+  const car=event.target.closest('[data-car]'); if(car){if(car.dataset.car==='mic'){state.mic=!state.mic;toast(state.mic?'Mikrofon bekapcsolva':'Mikrofon kikapcsolva');renderCar();}if(car.dataset.car==='auto'){state.autoNext=!state.autoNext;renderCar();}if(car.dataset.car==='play'){state.playing?stopSpeech():speakCurrent();}if(car.dataset.car==='pro-preview'){state.subscription.proPreviewActive=true;saveState();renderCar();toast('A következő 3 hírt Pro hanggal hallod');}saveState();return;}
   const mode=event.target.closest('[data-mode]'); if(mode){state.assistantMode=mode.dataset.mode;renderAssistant();saveState();return;}
   const question=event.target.closest('[data-question]'); if(question){state.assistantMode='text';renderAssistant();setTimeout(()=>appendChat(question.dataset.question),0);return;}
   const setting=event.target.closest('[data-setting]'); if(setting){settingsSheet(setting.dataset.setting);return;}
+  const plan=event.target.closest('[data-plan]'); if(plan){state.subscription.plan=plan.dataset.plan;saveState();subscriptionSheet('plans');return;}
+  const subAction=event.target.closest('[data-sub-action]'); if(subAction){const action=subAction.dataset.subAction;if(action==='review'){subscriptionSheet('confirm');}if(action==='plans'){subscriptionSheet('plans');}if(action==='start-trial'){state.subscription.status='trial';state.subscription.trialDays=14;state.subscription.aiMinutesUsed=0;state.subscription.aiMinutesLimit=state.subscription.plan==='pro'?250:0;saveState();toast('A 14 napos próba elindult');subscriptionSheet();}if(action==='usage'){usageSheet();}if(action==='subscription-home'){subscriptionSheet();}if(action==='restore'){state.subscription.status='active';state.subscription.aiMinutesLimit=state.subscription.plan==='pro'?250:0;saveState();renderSubscriptionGate();toast('A vásárlást visszaállítottuk');subscriptionSheet();}if(action==='store-manage'){toast('Az alkalmazás-áruház előfizetési oldala nyílna meg');}if(action==='expire-demo'){state.subscription.status='expired';saveState();renderSubscriptionGate();}if(action==='payment-demo'){state.subscription.status='payment_failed';saveState();renderSubscriptionGate();}return;}
+  const subscribe=event.target.closest('[data-subscribe]'); if(subscribe){state.subscription.plan=subscribe.dataset.subscribe;state.subscription.status='active';state.subscription.aiMinutesUsed=0;state.subscription.aiMinutesLimit=state.subscription.plan==='pro'?250:0;state.subscription.proPreviewAvailable=state.subscription.plan==='basic';state.subscription.proPreviewRemaining=3;state.subscription.proPreviewActive=false;state.route='car';saveState();render();toast(`${planName(state.subscription.plan)} aktiválva`);return;}
   const source=event.target.closest('[data-source]'); if(source){state.sources[source.dataset.source]=!state.sources[source.dataset.source];saveState();settingsSheet('sources');return;}
   const theme=event.target.closest('[data-theme]'); if(theme){state.theme=theme.dataset.theme;applyTheme();saveState();settingsSheet('appearance');return;}
   const lib=event.target.closest('[data-library]'); if(lib){librarySheet(lib.dataset.library);return;}
@@ -166,4 +235,3 @@ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&sheet.class
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(state.theme==='system')applyTheme();});
 applyTheme(); render();
 if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
-
