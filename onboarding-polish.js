@@ -53,6 +53,12 @@
       .choice-copy small{line-height:1.35;color:var(--muted,#A8B7B6)}
       .choice-price{font-size:.82rem;white-space:nowrap;color:var(--text,#F4F8F7)}
       .plan-note-box{border:1px solid rgba(92,199,189,.16);border-radius:18px;background:rgba(92,199,189,.08);padding:12px 14px;color:var(--muted,#A8B7B6);line-height:1.45;font-size:.9rem;margin-bottom:14px}
+      .onboarding-source-intro{
+        border:1px solid rgba(92,199,189,.16);border-radius:20px;background:rgba(92,199,189,.08);
+        padding:14px;margin:0 0 13px;color:var(--muted,#A8B7B6);line-height:1.45;font-size:.9rem;
+      }
+      .onboarding-source-intro strong{display:block;color:var(--text,#F4F8F7);font-size:1rem;margin-bottom:4px}
+      .onboarding-source-actions{position:sticky;bottom:0;display:grid;gap:9px;margin-top:13px;padding-top:12px;background:linear-gradient(180deg,transparent,var(--surface,#10262C) 22%)}
     `;
     document.head.appendChild(style);
   }
@@ -162,9 +168,138 @@
     </section>`;
   }
 
+  function escapeHtml(value){
+    return String(value).replace(/[&<>"']/g,character=>({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[character]));
+  }
+
+  function sourceCount(sources){
+    return Object.values(sources||{}).filter(Boolean).length;
+  }
+
+  function saveLiveState(){
+    try{if(typeof saveState==='function')saveState();else localStorage.setItem(STORE,JSON.stringify(liveState()||storedState()));}catch(_){}
+  }
+
+  function sourceRowsHtml(){
+    const live=liveState()||storedState();
+    return Object.entries(live.sources||{}).map(([name,on])=>{
+      const safeName=escapeHtml(name);
+      return `<button class="settings-row" data-onboarding-source="${encodeURIComponent(name)}"><span class="row-icon">${safeName.charAt(0)}</span><span class="row-copy"><strong>${safeName}</strong><small>${on?'Bekapcsolva':'Kikapcsolva'}</small></span><span class="toggle ${on?'on':''}"></span></button>`;
+    }).join('');
+  }
+
+  function showOnboardingSources(){
+    ensurePolishStyle();
+    const live=liveState()||storedState();
+    const count=sourceCount(live.sources);
+    if(typeof openSheet!=='function')return;
+    openSheet('RSS-források beállítása','Mielőtt elindul a felolvasás',`
+      <section class="onboarding-sources-screen">
+        <div class="onboarding-source-intro">
+          <strong>Válaszd ki, honnan olvassuk fel a híreket.</strong>
+          Ezekből a forrásokból épül fel a hírfolyam és az Autós mód első felolvasása. Legalább egy RSS-forrás maradjon bekapcsolva.
+        </div>
+        <button class="primary-button" data-onboarding-add-source>＋ Új RSS-forrás</button>
+        <div class="settings-group" style="margin-top:13px">${sourceRowsHtml()}</div>
+        <div class="onboarding-source-actions">
+          <button class="primary-button coral-button" data-onboarding-sources-done>${count} forrás mentése és felolvasás indítása</button>
+        </div>
+      </section>
+    `);
+  }
+
+  function showOnboardingAddSource(){
+    ensurePolishStyle();
+    if(typeof openSheet!=='function')return;
+    const recommendations=['444','G7','Hírstart','Index','Népszava'];
+    openSheet('Új RSS-forrás','Ajánlásból vagy RSS-linkkel',`
+      <section class="onboarding-source-add-screen">
+        <h3 class="section-label">Ajánlott magyar források</h3>
+        <div class="settings-group">${recommendations.map(name=>`<button class="settings-row" data-onboarding-recommended="${encodeURIComponent(name)}"><span class="row-icon">${escapeHtml(name.charAt(0))}</span><span class="row-copy"><strong>${escapeHtml(name)}</strong><small>Ellenőrzött RSS-ajánlás</small></span><span class="row-end">＋</span></button>`).join('')}</div>
+        <h3 class="section-label">Hozzáadás RSS-linkkel</h3>
+        <form id="onboardingRssForm" class="source-form">
+          <label for="onboardingRssUrl">RSS-csatorna címe</label>
+          <input id="onboardingRssUrl" class="search-input" type="url" inputmode="url" placeholder="https://pelda.hu/rss" required>
+          <button class="primary-button" type="submit">RSS-forrás hozzáadása</button>
+        </form>
+        <button class="text-button" data-onboarding-sources-back>Vissza az RSS-forrásokhoz</button>
+      </section>
+    `);
+  }
+
+  function finishOnboardingToCar(){
+    const live=liveState()||storedState();
+    if(sourceCount(live.sources)<1){
+      notify('Legalább egy RSS-forrást válassz ki');
+      return;
+    }
+    live.onboarding={
+      ...(live.onboarding||{}),
+      required:false,
+      introSeen:true,
+      authDone:true,
+      subscriptionDone:true,
+      rssDone:true,
+      privacyAccepted:true,
+      completed:true
+    };
+    live.route='car';
+    live.mic=true;
+    live.autoNext=true;
+    live.playing=false;
+    saveLiveState();
+    try{sessionStorage.removeItem(LAUNCH);}catch(_){}
+    document.getElementById('sheet')?.classList.remove('open');
+    document.getElementById('sheet')?.setAttribute('aria-hidden','true');
+    try{if(typeof render==='function')render();}catch(_){}
+    try{
+      if(typeof speakCurrent==='function')speakCurrent();
+      else if(live){live.playing=true;saveLiveState();if(typeof renderCar==='function')renderCar();}
+    }catch(_){
+      live.playing=true;
+      saveLiveState();
+      try{if(typeof renderCar==='function')renderCar();}catch(__){}
+    }
+    setTimeout(()=>{
+      const current=liveState();
+      if(current?.route==='car'&&!current.playing){
+        current.playing=true;
+        saveLiveState();
+        try{if(typeof renderCar==='function')renderCar();}catch(_){}
+      }
+    },120);
+    notify('RSS-források mentve, indul a felolvasás');
+  }
+
   function showPlans(){
     ensurePolishStyle();
     if(typeof openSheet==='function')openSheet('Próbaidő és csomagok','Nincs fizetés most',plansHtml());
+  }
+
+  function showPlanChange(){
+    const live=liveState()||storedState();
+    const currentPlan=live.subscription?.plan||'basic';
+    ensurePolishStyle();
+    if(typeof openSheet!=='function')return;
+    openSheet('Csomagváltás','Alap vagy Pro csomag',`<section class="auth-screen">
+      <div class="plan-hero">
+        <div class="welcome-brand"><img src="assets/brand/hirbeszed-mark-light.svg" alt=""><div class="welcome-wordmark"><span>Hír</span>beszéd</div></div>
+        <div class="auth-kicker">ELŐFIZETÉS</div>
+        <h1>Válaszd ki, milyen hanggal folytatod.</h1>
+        <p>A próbaidő alatt nincs terhelés. A kiválasztott csomag alapján mutatjuk a Pro hangkeretet és az ajánlatokat.</p>
+      </div>
+      <div class="plan-list-v4">
+        <button class="plan-choice ${currentPlan==='basic'?'selected':''}" data-plan-switch="basic"><span class="choice-dot">${currentPlan==='basic'?'✓':''}</span><span class="choice-copy"><strong>Hírbeszéd Alap</strong><small>Rendszerhangos felolvasás, autós mód, RSS hírfolyam, mentések, előzmények és alap asszisztens.</small></span><b class="choice-price">1500 Ft/hó</b></button>
+        <button class="plan-choice ${currentPlan==='pro'?'selected':''}" data-plan-switch="pro"><span class="choice-dot">${currentPlan==='pro'?'✓':''}</span><span class="choice-copy"><em>PRÉMIUM HANG</em><strong>Hírbeszéd Pro</strong><small>Minden Alap funkció, természetesebb AI-felolvasás és havi 240 perc Pro hangkeret.</small></span><b class="choice-price">3500 Ft/hó</b></button>
+      </div>
+      <button class="secondary-button" data-sub-action="subscription-home">Vissza az előfizetéshez</button>
+    </section>`);
   }
 
   function selectPlan(button){
@@ -198,25 +333,19 @@
     };
     const onboarding={
       ...(current.onboarding||{}),
-      required:false,
+      required:true,
       introSeen:true,
       authDone:true,
       subscriptionDone:true,
+      rssDone:false,
       privacyAccepted:true,
-      completed:true,
+      completed:false,
       proOfferAvailable:plan!=='pro'
     };
     const auth={...(current.auth||{}),loggedIn:true,provider:current.auth?.provider||'Email / telefon',name:current.auth?.name||'Hírbeszéd felhasználó'};
-    persist({auth,onboarding,subscription,route:'car',playing:true,autoNext:true,mic:true});
-    try{sessionStorage.removeItem(LAUNCH);}catch(_){}
-    document.getElementById('sheet')?.classList.remove('open');
-    document.getElementById('sheet')?.setAttribute('aria-hidden','true');
-    try{if(typeof render==='function')render();}catch(_){}
+    persist({auth,onboarding,subscription});
+    showOnboardingSources();
     notify(plan==='trial'?'A 14 napos próba elindult':'A csomag próbaidővel elindult');
-  }
-
-  function saveLiveState(){
-    try{if(typeof saveState==='function')saveState();else localStorage.setItem(STORE,JSON.stringify(liveState()||storedState()));}catch(_){}
   }
 
   function redrawSubscription(screen){
@@ -236,7 +365,11 @@
       return true;
     }
     if(action==='plans'){
-      try{if(typeof subscriptionSheet==='function')subscriptionSheet('plans');}catch(_){}
+      if(live.subscription.status&&live.subscription.status!=='inactive'){
+        showPlanChange();
+      }else{
+        try{if(typeof subscriptionSheet==='function')subscriptionSheet('plans');}catch(_){}
+      }
       setTimeout(patchState240,0);
       return true;
     }
@@ -298,6 +431,21 @@
     return true;
   }
 
+  function handlePlanSwitch(plan){
+    const live=liveState();
+    if(!live?.subscription)return false;
+    live.subscription.plan=plan;
+    live.subscription.aiMinutesLimit=plan==='pro'?240:0;
+    live.subscription.aiMinutesUsed=0;
+    live.subscription.proPreviewAvailable=plan==='basic';
+    live.subscription.proPreviewRemaining=3;
+    live.subscription.proPreviewActive=false;
+    saveLiveState();
+    notify(plan==='pro'?'Pro csomag kiválasztva':'Alap csomag kiválasztva');
+    redrawSubscription();
+    return true;
+  }
+
   function normalizeText(root=document.body){
     if(!root)return;
     root.querySelectorAll('button,.settings-row,.gate-plan,.plan-card,.usage-panel,.price-action,.auth-screen').forEach(el=>{
@@ -336,7 +484,9 @@
     const body=document.getElementById('sheetBody');
     if(!body)return;
     const hasOldOnboardingPlan=body.querySelector('[data-onboarding-plan]');
-    if(hasOldOnboardingPlan||/előfizetés|csomag/i.test(title)&&/próba|hó|Ft/.test(body.textContent)){
+    const subscriptionStatus=(liveState()||storedState()).subscription?.status||'inactive';
+    const isManagingSubscription=subscriptionStatus!=='inactive';
+    if(!isManagingSubscription&&(hasOldOnboardingPlan||/előfizetés|csomag/i.test(title)&&/próba|hó|Ft/.test(body.textContent))){
       showPlans();
     }
   }
@@ -351,6 +501,13 @@
 
     const subscribe=event.target.closest('[data-subscribe]');
     if(subscribe&&handleSubscribe(subscribe.dataset.subscribe)){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
+
+    const planSwitch=event.target.closest('[data-plan-switch]');
+    if(planSwitch&&handlePlanSwitch(planSwitch.dataset.planSwitch)){
       event.preventDefault();
       event.stopImmediatePropagation();
       return;
@@ -372,6 +529,69 @@
       }else{
         completeOnboarding(onboardingPlan.dataset.onboardingPlan||'trial');
       }
+      return;
+    }
+
+    const onboardingSource=event.target.closest('[data-onboarding-source]');
+    if(onboardingSource){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const live=liveState()||storedState();
+      const name=decodeURIComponent(onboardingSource.dataset.onboardingSource||'');
+      if(!name||!live.sources)return;
+      if(live.sources[name]&&sourceCount(live.sources)<=1){
+        notify('Legalább egy RSS-forrás maradjon bekapcsolva');
+        return;
+      }
+      live.sources[name]=!live.sources[name];
+      saveLiveState();
+      showOnboardingSources();
+      return;
+    }
+
+    const onboardingAdd=event.target.closest('[data-onboarding-add-source]');
+    if(onboardingAdd){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      showOnboardingAddSource();
+      return;
+    }
+
+    const onboardingRecommended=event.target.closest('[data-onboarding-recommended]');
+    if(onboardingRecommended){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const live=liveState()||storedState();
+      const name=decodeURIComponent(onboardingRecommended.dataset.onboardingRecommended||'');
+      if(name){
+        live.sources={...(live.sources||{}),[name]:true};
+        saveLiveState();
+        notify(`${name} hozzáadva`);
+      }
+      showOnboardingSources();
+      return;
+    }
+
+    if(event.target.closest('[data-onboarding-sources-back]')){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      showOnboardingSources();
+      return;
+    }
+
+    if(event.target.closest('[data-onboarding-sources-done]')){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      finishOnboardingToCar();
+      return;
+    }
+
+    const closeOnboardingSources=event.target.closest('#sheetBack,[data-action="close-sheet"]');
+    if(closeOnboardingSources&&document.querySelector('.onboarding-sources-screen,.onboarding-source-add-screen')){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if(document.querySelector('.onboarding-source-add-screen'))showOnboardingSources();
+      else notify('Előbb válaszd ki az RSS-forrásokat');
       return;
     }
 
@@ -411,8 +631,37 @@
     }
   },true);
 
+  document.addEventListener('submit',event=>{
+    if(event.target.id==='onboardingRssForm'){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const input=document.getElementById('onboardingRssUrl');
+      const live=liveState()||storedState();
+      try{
+        const url=new URL(input.value.trim());
+        const name=url.hostname.replace(/^www\./,'');
+        live.sources={...(live.sources||{}),[name]:true};
+        saveLiveState();
+        notify(`${name} hozzáadva`);
+        showOnboardingSources();
+      }catch(_){
+        notify('Adj meg egy érvényes RSS-linket');
+      }
+    }
+  },true);
+
+  document.addEventListener('keydown',event=>{
+    if(event.key!=='Escape')return;
+    if(document.querySelector('.onboarding-sources-screen,.onboarding-source-add-screen')){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if(document.querySelector('.onboarding-source-add-screen'))showOnboardingSources();
+      else notify('Előbb válaszd ki az RSS-forrásokat');
+    }
+  },true);
+
   document.addEventListener('click',event=>{
-    if(event.target.closest('[data-sub-action],[data-subscribe],[data-plan]')){
+    if(event.target.closest('[data-sub-action],[data-subscribe],[data-plan],[data-plan-switch]')){
       setTimeout(patchState240,0);
       setTimeout(patchState240,80);
     }
