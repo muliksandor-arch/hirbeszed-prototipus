@@ -75,9 +75,11 @@
       if(live.paused){
         live.paused=false;
         live.playing=true;
-        try{if('speechSynthesis' in window)speechSynthesis.resume();}catch(_){}
+        if(typeof resumeCurrentSpeech==='function')resumeCurrentSpeech();
+        else try{if('speechSynthesis' in window)speechSynthesis.resume();}catch(_){}
         if(typeof saveState==='function')saveState();
-        if(typeof renderCar==='function')renderCar();
+        if(typeof updateCarDom==='function')updateCarDom();
+        else if(typeof renderCar==='function')renderCar();
         return;
       }
       if(live.playing){
@@ -85,7 +87,8 @@
         live.playing=true;
         try{if('speechSynthesis' in window)speechSynthesis.pause();}catch(_){}
         if(typeof saveState==='function')saveState();
-        if(typeof renderCar==='function')renderCar();
+        if(typeof updateCarDom==='function')updateCarDom();
+        else if(typeof renderCar==='function')renderCar();
         return;
       }
     }

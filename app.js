@@ -44,7 +44,7 @@ state.subscription = {...defaults.subscription,...(state.subscription || {})};
 state.enabledTopics = Array.isArray(state.enabledTopics) ? state.enabledTopics : [...defaults.enabledTopics];
 const legacyTopics = {Mind:'fresh',Technológia:'tech_ai',Világhírek:'foreign','Helyi hírek':'local'};
 state.category = legacyTopics[state.category] || topics.find(topic=>topic.name===state.category)?.id || state.category || 'fresh';
-let currentUtterance = null; let currentRecognition = null; let toastTimer = null; let activeSheetRenderer = null;
+let currentUtterance = null; let speechRunId = 0; let currentSpeechText = ''; let currentSpeechOffset = 0; let currentSpeechDetails = false; let currentRecognition = null; let toastTimer = null; let activeSheetRenderer = null;
 const $ = selector => document.querySelector(selector);
 const view = $('#view'); const sheet = $('#sheet'); const sheetBody = $('#sheetBody');
 
@@ -182,6 +182,29 @@ function renderFeed(){
 }
 
 function currentCarArticle(){ return articles[state.carIndex%articles.length]; }
+function currentSpeechBody(details=state.detailedRead){
+  const article=currentCarArticle();
+  return `${article.source}. ${article.title}. ${details?article.body:article.excerpt}`;
+}
+function resumeCurrentSpeech(){
+  const details=currentSpeechText?currentSpeechDetails:state.detailedRead;
+  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){
+    speakCurrent(details,currentSpeechOffset);
+    return;
+  }
+  if(typeof navigator!=='undefined'&&/Android/i.test(navigator.userAgent||'')){
+    speakCurrent(details,currentSpeechOffset);
+    return;
+  }
+  try{speechSynthesis.resume();}catch(_){}
+  setTimeout(()=>{
+    if(state.route!=='car'||!state.playing||state.paused)return;
+    let silent=false;
+    try{silent=!speechSynthesis.speaking||speechSynthesis.paused;}catch(_){silent=true;}
+    if(silent)speakCurrent(details,currentSpeechOffset);
+  },420);
+}
+window.resumeCurrentSpeech=resumeCurrentSpeech;
 function handleVoiceCommand(text){
   const command=(text||'').toLowerCase();
   if(command.includes('mikrofon')){state.mic=!state.mic;if(state.mic)startVoiceListening();else stopVoiceListening();toast(state.mic?'Mikrofon bekapcsolva':'Mikrofon kikapcsolva');updateCarDom();return;}
@@ -225,10 +248,18 @@ function stopVoiceListening(){
   currentRecognition=null;
 }
 function stopSpeech(update=true){
-  if('speechSynthesis' in window) speechSynthesis.cancel(); currentUtterance=null; state.playing=false; state.paused=false; if(update&&state.route==='car') updateCarDom();
+  speechRunId++;
+  if('speechSynthesis' in window)try{speechSynthesis.cancel();}catch(_){}
+  currentUtterance=null; currentSpeechText=''; currentSpeechOffset=0; state.playing=false; state.paused=false; if(update&&state.route==='car') updateCarDom();
 }
-function speakCurrent(details=state.detailedRead){
+function speakCurrent(details=state.detailedRead,startOffset=0){
   const article=currentCarArticle();
+  const fullText=currentSpeechBody(details);
+  const maxOffset=Math.max(0,fullText.length-1);
+  const offset=Math.max(0,Math.min(Number(startOffset)||0,maxOffset));
+  currentSpeechText=fullText;
+  currentSpeechDetails=details;
+  currentSpeechOffset=offset;
   if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){
     state.playing=true; state.paused=false;
     saveState();
@@ -236,17 +267,21 @@ function speakCurrent(details=state.detailedRead){
     toast('A böngésző nem támogatja a felolvasást, vizuális próba fut');
     return;
   }
-  speechSynthesis.cancel();
-  currentUtterance=new SpeechSynthesisUtterance(`${article.source}. ${article.title}. ${details?article.body:article.excerpt}`);
+  const runId=++speechRunId;
+  try{speechSynthesis.cancel();}catch(_){}
+  const remaining=fullText.slice(offset).trim()||fullText;
+  const runOffset=remaining===fullText?0:offset;
+  currentUtterance=new SpeechSynthesisUtterance(remaining);
   currentUtterance.lang='hu-HU'; currentUtterance.rate=1; state.playing=true; state.paused=false; updateCarDom();
-  currentUtterance.onend=()=>{ recordRead(article.id); state.playing=false; state.paused=false; const previewFinished=consumeProPreviewArticle(); if(previewFinished){updateCarDom();setTimeout(()=>proPreviewUpsell(),350);return;} if(state.autoNext&&state.route==='car'){setTimeout(()=>nextArticle(true),700)}else updateCarDom(); };
-  currentUtterance.onerror=()=>{currentUtterance=null;state.playing=true;state.paused=false;updateCarDom();toast('A böngésző hangmotorja nem indult el, vizuális próba fut');};
-  try{speechSynthesis.speak(currentUtterance);}catch(_){currentUtterance=null;state.playing=true;state.paused=false;updateCarDom();toast('A böngésző hangmotorja nem indult el, vizuális próba fut');}
+  currentUtterance.onboundary=event=>{ if(runId!==speechRunId)return; if(typeof event.charIndex==='number')currentSpeechOffset=Math.min(fullText.length,runOffset+event.charIndex); };
+  currentUtterance.onend=()=>{ if(runId!==speechRunId)return; currentSpeechText=''; currentSpeechOffset=0; recordRead(article.id); state.playing=false; state.paused=false; const previewFinished=consumeProPreviewArticle(); if(previewFinished){updateCarDom();setTimeout(()=>proPreviewUpsell(),350);return;} if(state.autoNext&&state.route==='car'){setTimeout(()=>nextArticle(true),700)}else updateCarDom(); };
+  currentUtterance.onerror=()=>{ if(runId!==speechRunId)return; currentUtterance=null;state.playing=true;state.paused=false;updateCarDom();toast('A böngésző hangmotorja nem indult el, vizuális próba fut');};
+  try{speechSynthesis.speak(currentUtterance);}catch(_){if(runId!==speechRunId)return; currentUtterance=null;state.playing=true;state.paused=false;updateCarDom();toast('A böngésző hangmotorja nem indult el, vizuális próba fut');}
 }
 function toggleCarPlayback(){
   if(state.paused){
     state.paused=false; state.playing=true;
-    if('speechSynthesis' in window)try{speechSynthesis.resume();}catch(_){}
+    resumeCurrentSpeech();
     updateCarDom(); saveState(); return;
   }
   if(state.playing){
@@ -268,8 +303,9 @@ function handleCarPlayButton(event){
 window.handleCarPlayButton=handleCarPlayButton;
 function nextArticle(auto=false){ recordRead(currentCarArticle().id); state.carIndex=(state.carIndex+1)%articles.length; saveState(); if(auto||state.playing){state.playing=true;state.paused=false;speakCurrent();}else updateCarDom(); }
 function goToAdjacentArticle(direction,continuePlayback=true){
+  speechRunId++;
   if('speechSynthesis' in window)try{speechSynthesis.cancel();}catch(_){}
-  currentUtterance=null;
+  currentUtterance=null; currentSpeechText=''; currentSpeechOffset=0;
   recordRead(currentCarArticle().id);
   state.carIndex=(state.carIndex+articles.length+direction)%articles.length;
   state.paused=false;
@@ -285,7 +321,7 @@ function goToAdjacentArticle(direction,continuePlayback=true){
 function togglePause(){
   if(state.paused){
     state.paused=false; state.playing=true;
-    if('speechSynthesis' in window)try{speechSynthesis.resume();}catch(_){}
+    resumeCurrentSpeech();
     updateCarDom(); saveState(); return;
   }
   if(!state.playing){speakCurrent();return;}
@@ -296,8 +332,9 @@ function togglePause(){
 function toggleDetailedRead(){
   const switchingToDetailed=!state.detailedRead;
   if(!switchingToDetailed){
+    speechRunId++;
     if('speechSynthesis' in window)try{speechSynthesis.cancel();}catch(_){}
-    currentUtterance=null;
+    currentUtterance=null; currentSpeechText=''; currentSpeechOffset=0;
     recordRead(currentCarArticle().id);
     state.carIndex=(state.carIndex+1)%articles.length;
   }
