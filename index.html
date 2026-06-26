@@ -9,9 +9,9 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/brand/hirbeszed-app-icon-light.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/brand/hirbeszed-app-icon-light.svg">
-  <link rel="stylesheet" href="styles.css?v=12">
-  <link rel="stylesheet" href="topics-update.css?v=1">
-  <link rel="stylesheet" href="settings-system.css?v=1">
+  <link rel="stylesheet" href="styles.css?v=28">
+  <link rel="stylesheet" href="prototype-topics.css?v=2">
+  <link rel="stylesheet" href="prototype-settings.css?v=2">
 </head>
 <body>
   <div class="prototype-note">Kattintható mobilprototípus · a telefonodon teljes képernyőn jelenik meg</div>
@@ -21,7 +21,7 @@
         <img id="brandMark" src="assets/brand/hirbeszed-mark-light.svg" alt="">
         <div>
           <div class="wordmark"><span>Hír</span>beszéd</div>
-          <div id="pageTitle" class="page-title">Autós mód</div>
+          <div id="pageTitle" class="page-title">Felolvasó</div>
         </div>
       </div>
       <div id="headerActions" class="header-actions"></div>
@@ -31,16 +31,16 @@
 
     <nav class="bottom-nav" aria-label="Fő navigáció">
       <button type="button" data-route="feed" aria-label="Hírfolyam">
-        <span class="nav-icon">▤</span><span>Hírfolyam</span>
+        <span class="nav-icon" data-nav-icon="feed">▤</span><span>Hírfolyam</span>
       </button>
-      <button type="button" data-route="car" aria-label="Autós mód">
-        <span class="nav-icon">▰</span><span>Autós mód</span>
+      <button type="button" data-route="car" aria-label="Felolvasó">
+        <span class="nav-icon" data-nav-icon="reader">▰</span><span>Felolvasó</span>
       </button>
       <button type="button" data-route="assistant" aria-label="Asszisztens">
-        <span class="nav-icon">◉</span><span>Asszisztens</span>
+        <span class="nav-icon" data-nav-icon="assistant">◉</span><span>Asszisztens</span>
       </button>
       <button type="button" data-route="settings" aria-label="Beállítások">
-        <span class="nav-icon">⚙</span><span>Beállítások</span>
+        <span class="nav-icon" data-nav-icon="settings">⚙</span><span>Beállítások</span>
       </button>
     </nav>
 
@@ -60,7 +60,7 @@
         <p id="gateCopy"></p>
       </div>
       <div class="gate-plans">
-        <button class="gate-plan" data-subscribe="basic"><span><strong>Hírbeszéd Alap</strong><small>Rendszerhang, autós mód és asszisztens</small></span><b>1500 Ft/hó</b></button>
+        <button class="gate-plan" data-subscribe="basic"><span><strong>Hírbeszéd Alap</strong><small>Rendszerhang, felolvasó és asszisztens</small></span><b>1500 Ft/hó</b></button>
         <button class="gate-plan pro" data-subscribe="pro"><span><em>AJÁNLOTT</em><strong>Hírbeszéd Pro</strong><small>240 perc prémium AI-hang havonta</small></span><b>3500 Ft/hó</b></button>
       </div>
       <button class="text-button" data-sub-action="restore">Vásárlás visszaállítása</button>
@@ -69,12 +69,14 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
-  <script src="app.js?v=16"></script>
-  <script src="onboarding-polish.js?v=7"></script>
-  <script src="topics-update.js?v=1"></script>
-  <script src="settings-system.js?v=2"></script>
-  <script src="settings-hotfix.js?v=10"></script>
-  <script src="auth-hotfix.js?v=4"></script>
-  <script src="button-layout-fix.js?v=1"></script>
+  <script src="app.js?v=46"></script>
+  <script src="prototype-onboarding.js?v=2"></script>
+  <script src="prototype-topics.js?v=2"></script>
+  <script src="prototype-settings.js?v=2"></script>
+  <script src="prototype-reader-controls.js?v=2"></script>
+  <script src="prototype-auth.js?v=2"></script>
+  <script src="prototype-layout.js?v=2"></script>
+  <script src="prototype-auto-preview.js?v=2"></script>
+  <script src="prototype-navigation.js?v=2"></script>
 </body>
 </html>

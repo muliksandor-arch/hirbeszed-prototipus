@@ -1,14 +1,14 @@
 (function(){
-  if(window.__hirbeszedOnboardingPolishLoaded)return;
-  window.__hirbeszedOnboardingPolishLoaded=true;
+  if(window.__hirbeszedOnboardingLoaded)return;
+  window.__hirbeszedOnboardingLoaded=true;
 
   const STORE='hirbeszed-state';
   const LAUNCH='hirbeszed-default-launch';
 
-  function ensurePolishStyle(){
-    if(document.getElementById('onboardingPolishStyle'))return;
+  function ensureOnboardingStyle(){
+    if(document.getElementById('prototypeOnboardingStyle'))return;
     const style=document.createElement('style');
-    style.id='onboardingPolishStyle';
+    style.id='prototypeOnboardingStyle';
     style.textContent=`
       .welcome-card{
         background:radial-gradient(circle at 18% 10%,rgba(242,91,69,.34),transparent 27%),linear-gradient(145deg,#061216 0%,#0D242B 54%,#153841 100%)!important;
@@ -131,7 +131,7 @@
   }
 
   function twoFactorSheet(){
-    ensurePolishStyle();
+    ensureOnboardingStyle();
     if(typeof openSheet!=='function')return;
     openSheet('Kétlépcsős azonosítás','Regisztráció megerősítése',`
       <section class="auth-screen">
@@ -159,8 +159,8 @@
         <p>Most csak a próbaidőt indítjuk. A próba lejártakor ugyanez az oldal segít majd eldönteni, hogy Alap vagy Pro csomaggal folytatod.</p>
       </div>
       <div class="plan-list-v4">
-        <button class="plan-choice selected" data-onboarding-plan="trial"><span class="choice-dot">✓</span><span class="choice-copy"><em>ALAPÉRTELMEZETT</em><strong>Próbaidő megkezdése</strong><small>14 napig kipróbálhatod az appot fizetés nélkül. Az autós mód, hírfolyam, mentések és asszisztens tesztelhető.</small></span><b class="choice-price">0 Ft</b></button>
-        <button class="plan-choice" data-onboarding-plan="basic"><span class="choice-dot"></span><span class="choice-copy"><strong>Hírbeszéd Alap</strong><small>1500 Ft/hó. Rendszerhangos felolvasás, autós mód, RSS hírfolyam, mentett hírek, előzmények és alap asszisztens.</small></span><b class="choice-price">1500 Ft/hó</b></button>
+        <button class="plan-choice selected" data-onboarding-plan="trial"><span class="choice-dot">✓</span><span class="choice-copy"><em>ALAPÉRTELMEZETT</em><strong>Próbaidő megkezdése</strong><small>14 napig kipróbálhatod az appot fizetés nélkül. A felolvasó, hírfolyam, mentések és asszisztens tesztelhető.</small></span><b class="choice-price">0 Ft</b></button>
+        <button class="plan-choice" data-onboarding-plan="basic"><span class="choice-dot"></span><span class="choice-copy"><strong>Hírbeszéd Alap</strong><small>1500 Ft/hó. Rendszerhangos felolvasás, Felolvasó nézet, RSS hírfolyam, mentett hírek, előzmények és alap asszisztens.</small></span><b class="choice-price">1500 Ft/hó</b></button>
         <button class="plan-choice" data-onboarding-plan="pro"><span class="choice-dot"></span><span class="choice-copy"><em>PRÉMIUM HANG</em><strong>Hírbeszéd Pro</strong><small>3500 Ft/hó. Minden Alap funkció, természetesebb AI-felolvasás és havi 240 perc Pro hangkeret. Ha elfogy, a felolvasás automatikusan visszavált az Alap rendszerhangra.</small></span><b class="choice-price">3500 Ft/hó</b></button>
       </div>
       <div class="plan-note-box">A fizetés a végleges appban az Apple App Store vagy a Google Play biztonságos rendszerén keresztül történik. A próba indításához most nem kérünk fizetési döntést.</div>
@@ -195,7 +195,7 @@
   }
 
   function showOnboardingSources(){
-    ensurePolishStyle();
+    ensureOnboardingStyle();
     const live=liveState()||storedState();
     const count=sourceCount(live.sources);
     if(typeof openSheet!=='function')return;
@@ -203,7 +203,7 @@
       <section class="onboarding-sources-screen">
         <div class="onboarding-source-intro">
           <strong>Válaszd ki, honnan olvassuk fel a híreket.</strong>
-          Ezekből a forrásokból épül fel a hírfolyam és az Autós mód első felolvasása. Legalább egy RSS-forrás maradjon bekapcsolva.
+          Ezekből a forrásokból épül fel a hírfolyam és a Felolvasó első felolvasása. Legalább egy RSS-forrás maradjon bekapcsolva.
         </div>
         <button class="primary-button" data-onboarding-add-source>＋ Új RSS-forrás</button>
         <div class="settings-group" style="margin-top:13px">${sourceRowsHtml()}</div>
@@ -215,7 +215,7 @@
   }
 
   function showOnboardingAddSource(){
-    ensurePolishStyle();
+    ensureOnboardingStyle();
     if(typeof openSheet!=='function')return;
     const recommendations=['444','G7','Hírstart','Index','Népszava'];
     openSheet('Új RSS-forrás','Ajánlásból vagy RSS-linkkel',`
@@ -278,14 +278,14 @@
   }
 
   function showPlans(){
-    ensurePolishStyle();
+    ensureOnboardingStyle();
     if(typeof openSheet==='function')openSheet('Próbaidő és csomagok','Nincs fizetés most',plansHtml());
   }
 
   function showPlanChange(){
     const live=liveState()||storedState();
     const currentPlan=live.subscription?.plan||'basic';
-    ensurePolishStyle();
+    ensureOnboardingStyle();
     if(typeof openSheet!=='function')return;
     openSheet('Csomagváltás','Alap vagy Pro csomag',`<section class="auth-screen">
       <div class="plan-hero">
@@ -295,7 +295,7 @@
         <p>A próbaidő alatt nincs terhelés. A kiválasztott csomag alapján mutatjuk a Pro hangkeretet és az ajánlatokat.</p>
       </div>
       <div class="plan-list-v4">
-        <button class="plan-choice ${currentPlan==='basic'?'selected':''}" data-plan-switch="basic"><span class="choice-dot">${currentPlan==='basic'?'✓':''}</span><span class="choice-copy"><strong>Hírbeszéd Alap</strong><small>Rendszerhangos felolvasás, autós mód, RSS hírfolyam, mentések, előzmények és alap asszisztens.</small></span><b class="choice-price">1500 Ft/hó</b></button>
+        <button class="plan-choice ${currentPlan==='basic'?'selected':''}" data-plan-switch="basic"><span class="choice-dot">${currentPlan==='basic'?'✓':''}</span><span class="choice-copy"><strong>Hírbeszéd Alap</strong><small>Rendszerhangos felolvasás, Felolvasó nézet, RSS hírfolyam, mentések, előzmények és alap asszisztens.</small></span><b class="choice-price">1500 Ft/hó</b></button>
         <button class="plan-choice ${currentPlan==='pro'?'selected':''}" data-plan-switch="pro"><span class="choice-dot">${currentPlan==='pro'?'✓':''}</span><span class="choice-copy"><em>PRÉMIUM HANG</em><strong>Hírbeszéd Pro</strong><small>Minden Alap funkció, természetesebb AI-felolvasás és havi 240 perc Pro hangkeret.</small></span><b class="choice-price">3500 Ft/hó</b></button>
       </div>
       <button class="secondary-button" data-sub-action="subscription-home">Vissza az előfizetéshez</button>
@@ -667,23 +667,23 @@
     }
   });
 
-  let polishScheduled=false;
-  function runPolishPass(){
-    polishScheduled=false;
-    ensurePolishStyle();
+  let onboardingSyncScheduled=false;
+  function runOnboardingSync(){
+    onboardingSyncScheduled=false;
+    ensureOnboardingStyle();
     normalizeText(document.getElementById('sheet')||document.body);
     normalizeText(document.getElementById('subscriptionGate'));
     maybeReplaceOldPlans();
   }
 
   const observer=new MutationObserver(()=>{
-    if(polishScheduled)return;
-    polishScheduled=true;
-    requestAnimationFrame(runPolishPass);
+    if(onboardingSyncScheduled)return;
+    onboardingSyncScheduled=true;
+    requestAnimationFrame(runOnboardingSync);
   });
 
   function boot(){
-    ensurePolishStyle();
+    ensureOnboardingStyle();
     normalizeText();
     patchState240();
     observer.observe(document.body,{subtree:true,childList:true});

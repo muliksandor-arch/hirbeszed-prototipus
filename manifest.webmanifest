@@ -1,7 +1,7 @@
 {
   "name":"Hírbeszéd prototípus",
   "short_name":"Hírbeszéd",
-  "description":"RSS hírolvasó és hangvezérelt autós mód prototípusa",
+  "description":"RSS hírolvasó és hangvezérelt felolvasó prototípusa",
   "start_url":"./",
   "scope":"./",
   "display":"standalone",
@@ -13,4 +13,3 @@
     {"src":"assets/brand/hirbeszed-app-icon-dark.svg","sizes":"any","type":"image/svg+xml","purpose":"maskable"}
   ]
 }
-
