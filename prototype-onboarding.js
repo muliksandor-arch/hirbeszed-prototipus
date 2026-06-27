@@ -179,7 +179,6 @@
         <button class="plan-choice" data-onboarding-plan="basic"><span class="choice-dot"></span><span class="choice-copy"><strong>Hírbeszéd Alap</strong><small>1500 Ft/hó. Rendszerhangos felolvasás, Felolvasó nézet, RSS hírfolyam, mentett hírek, előzmények és alap asszisztens.</small></span><b class="choice-price">1500 Ft/hó</b></button>
         <button class="plan-choice" data-onboarding-plan="pro"><span class="choice-dot"></span><span class="choice-copy"><em>PRÉMIUM HANG</em><strong>Hírbeszéd Pro</strong><small>3500 Ft/hó. Minden Alap funkció, természetesebb AI-felolvasás és havi 240 perc Pro hangkeret. Ha elfogy, a felolvasás automatikusan visszavált az Alap rendszerhangra.</small></span><b class="choice-price">3500 Ft/hó</b></button>
       </div>
-      <div class="plan-note-box">A fizetés a végleges appban az Apple App Store vagy a Google Play biztonságos rendszerén keresztül történik. A próba indításához most nem kérünk fizetési döntést.</div>
       <button class="primary-button coral-button" data-onboarding-plan="trial">Próbaidő indítása</button>
     </section>`;
   }

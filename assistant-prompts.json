@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "provider": "static-prototype",
+  "items": [
+    {
+      "question": "Mivel kezdjük a hírmustrát?",
+      "description": "Mondd el, milyen témára vagy kíváncsi, és átnézem hozzá a híreket."
+    },
+    {
+      "question": "Milyen hírekről beszéljünk?",
+      "description": "Kérdezhetsz témára, eseményre vagy forrásra, én pedig összefoglalom."
+    },
+    {
+      "question": "Mi érdekel most leginkább?",
+      "description": "Mondd ki a témát, és segítek eligazodni a friss hírek között."
+    },
+    {
+      "question": "Milyen témában nézzünk körül?",
+      "description": "Elég egy kulcsszó, például gazdaság, sport, közlekedés vagy technológia."
+    },
+    {
+      "question": "Mit keressek meg a hírfolyamban?",
+      "description": "Mondd el röviden, mire vagy kíváncsi, és megkeresem a kapcsolódó híreket."
+    },
+    {
+      "question": "Miről szeretnél hallani?",
+      "description": "Válaszolj természetesen, én pedig összefoglalom a lényeget."
+    },
+    {
+      "question": "Melyik témával induljunk?",
+      "description": "Mondd ki a témát, és elmondom, mi történt benne mostanában."
+    },
+    {
+      "question": "Miben segítsek a hírek között?",
+      "description": "Kérdezhetsz friss eseményről, háttérről vagy egy konkrét témáról."
+    },
+    {
+      "question": "Melyik hír érdekel?",
+      "description": "Mondd el, mire gondolsz, és átnézem a hozzá kapcsolódó cikkeket."
+    },
+    {
+      "question": "Keresünk valami frisset?",
+      "description": "Mondd ki a témát, és összeszedem a legfontosabb híreket."
+    },
+    {
+      "question": "Mi legyen az első téma?",
+      "description": "Kezdhetünk bármivel, ami most érdekel a hírfolyamból."
+    },
+    {
+      "question": "Milyen irányba menjünk?",
+      "description": "Mondhatsz témakört, hírtípust vagy egyszerű kérdést is."
+    },
+    {
+      "question": "Mit nézzek át neked?",
+      "description": "A friss RSS-hírek alapján röviden összefoglalom, amit találok."
+    },
+    {
+      "question": "Mire vagy kíváncsi a hírekből?",
+      "description": "Kérdezz szóban, és válaszolok a beállított források alapján."
+    },
+    {
+      "question": "Kezdjük a hírmustrát?",
+      "description": "Mondd meg, milyen témával induljunk, és már nézem is."
+    },
+    {
+      "question": "Mi foglalkoztat most?",
+      "description": "Elmondhatod saját szavaiddal, én hírekre fordítom a kérdést."
+    },
+    {
+      "question": "Melyik témát bontsam ki?",
+      "description": "Röviden vagy részletesebben is elmondhatom, amit a hírekből látok."
+    },
+    {
+      "question": "Kérdezz a friss hírekről.",
+      "description": "Mondd ki, mi érdekel, és keresek hozzá kapcsolódó híreket."
+    },
+    {
+      "question": "Milyen hírt hallgatnál meg?",
+      "description": "Választhatsz témát, forrást vagy konkrét eseményt is."
+    },
+    {
+      "question": "Indulhat a hangos hírmustra?",
+      "description": "Mondd el, merre induljunk, és összefoglalom a legfontosabbakat."
+    }
+  ]
+}

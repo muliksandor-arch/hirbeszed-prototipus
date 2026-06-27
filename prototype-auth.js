@@ -69,7 +69,7 @@
     const activeSheet=document.getElementById('sheet');
     const body=document.getElementById('sheetBody');
     if(body)body.scrollTop=0;
-    activeSheet?.classList.remove('open');
+    activeSheet?.classList.remove('open','sheet-no-header');
     activeSheet?.setAttribute('aria-hidden','true');
     try{activeSheetRenderer=null;}catch(_){}
   }
@@ -95,17 +95,18 @@
 
   function privacyHtml(){
     const checked=onboardingState().privacyAccepted?'checked':'';
-    return `<label class="privacy-check"><input id="privacyAccepted" type="checkbox" ${checked}><span>Elfogadom az adatvédelmi tájékoztatót és a prototípus használati feltételeit.</span></label><button class="text-button privacy-link" data-auth-action="privacy">Adatvédelmi tájékoztató megnyitása</button>`;
+    return `<div class="privacy-check"><label class="privacy-check-label" for="privacyAccepted"><input id="privacyAccepted" type="checkbox" ${checked}><span>Elfogadom az adatvédelmi tájékoztatót és a Hírbeszéd használati feltételeit.</span></label><button class="privacy-inline-link" type="button" data-auth-action="privacy">Adatvédelmi tájékoztató és használati feltételek</button></div>`;
   }
 
   function socialButtons(){
-    return `<div class="provider-list"><button class="auth-social apple" data-auth-action="social-apple">Apple bejelentkezés</button><button class="auth-social facebook" data-auth-action="social-facebook">Facebook folytatás</button><button class="auth-social google" data-auth-action="social-google">Google folytatás</button></div>`;
+    return `<div class="provider-list"><button class="auth-social google" data-auth-action="social-google">Belépés Google-fiókkal</button><button class="auth-social facebook" data-auth-action="social-facebook">Belépés Facebook-fiókkal</button><button class="auth-social apple" data-auth-action="social-apple">Belépés Apple-fiókkal</button></div>`;
   }
 
   function welcomeSheet(){
     ensureAuthStyle();
     ensureSubscriptionStyle();
-    openSheet('Hírbeszéd','Üdvözlő képernyő',`<section class="welcome-screen"><div class="welcome-card"><div class="welcome-brand"><img src="assets/brand/hirbeszed-mark-light.svg" alt=""><div class="welcome-wordmark"><span>Hír</span>beszéd</div></div><h1>Üdvözlünk a jövő hírapplikációjában.</h1><p>Friss magyar hírek, felolvasás, hangalapú vezérlés és AI asszisztens egyetlen letisztult appban.</p><div class="welcome-features"><span>RSS hírfolyam</span><span>Felolvasó</span><span>AI beszélgetés</span></div><div class="welcome-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>${privacyHtml()}${socialButtons()}<button class="primary-button coral-button" data-auth-action="choose-register">Email / telefon regisztráció</button><button class="secondary-button" data-auth-action="login">Már van fiókom</button><p class="auth-note">A 14 napos próba az előfizetés-választás után indul. A fizetést később az Apple vagy Google áruház kezeli.</p></section>`);
+    openSheet('Hírbeszéd','Üdvözlő képernyő',`<section class="welcome-screen"><div class="welcome-card"><div class="welcome-brand"><img src="assets/brand/hirbeszed-mark-light.svg" alt=""><div class="welcome-wordmark"><span>Hír</span>beszéd</div></div><h1>Üdvözlünk a jövő hírapplikációjában.</h1><p>Friss magyar hírek, felolvasás, hangalapú vezérlés és AI asszisztens egyetlen letisztult appban.</p><div class="welcome-features"><span>RSS hírfolyam</span><span>Felolvasó</span><span>AI beszélgetés</span></div><div class="welcome-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><p class="welcome-registration-note">Az alkalmazás használata regisztrációhoz kötött. Kérlek, jelentkezz be vagy regisztrálj.</p>${privacyHtml()}${socialButtons()}<button class="primary-button coral-button" data-auth-action="choose-register">Emailes vagy telefonos regisztráció</button><button class="secondary-button" data-auth-action="login">Már van fiókom, belépek</button></section>`);
+    document.getElementById('sheet')?.classList.add('sheet-no-header');
   }
 
   function accountSheet(){
@@ -164,7 +165,7 @@
   function plansSheet(){
     ensureAuthStyle();
     ensureSubscriptionStyle();
-    openSheet('Próbaidő és csomagok','Nincs fizetés most',`<section class="auth-screen"><div class="plan-hero"><div class="welcome-brand"><img src="assets/brand/hirbeszed-mark-light.svg" alt=""><div class="welcome-wordmark"><span>Hír</span>beszéd</div></div><div class="auth-kicker">14 NAPOS PRÓBA</div><h1>Kezdd el ingyen, előfizetés nélkül.</h1><p>Most csak a próbaidőt indítjuk. A próba lejártakor ugyanez az oldal segít majd eldönteni, hogy Alap vagy Pro csomaggal folytatod.</p></div><div class="plan-list-v4"><button class="plan-choice selected" data-onboarding-plan="trial"><span class="choice-dot">✓</span><span class="choice-copy"><em>ALAPÉRTELMEZETT</em><strong>Próbaidő megkezdése</strong><small>14 napig kipróbálhatod az appot fizetés nélkül. A felolvasó, hírfolyam, mentések és asszisztens tesztelhető.</small></span><b class="choice-price">0 Ft</b></button><button class="plan-choice" data-onboarding-plan="basic"><span class="choice-dot"></span><span class="choice-copy"><strong>Hírbeszéd Alap</strong><small>1500 Ft/hó. Rendszerhangos felolvasás, Felolvasó nézet, RSS hírfolyam, mentett hírek, előzmények és alap asszisztens.</small></span><b class="choice-price">1500 Ft/hó</b></button><button class="plan-choice" data-onboarding-plan="pro"><span class="choice-dot"></span><span class="choice-copy"><em>PRÉMIUM HANG</em><strong>Hírbeszéd Pro</strong><small>3500 Ft/hó. Minden Alap funkció, természetesebb AI-felolvasás és havi 240 perc Pro hangkeret. Ha elfogy, a felolvasás automatikusan visszavált az Alap rendszerhangra.</small></span><b class="choice-price">3500 Ft/hó</b></button></div><div class="plan-note-box">A fizetés a végleges appban az Apple App Store vagy a Google Play biztonságos rendszerén keresztül történik. A próba indításához most nem kérünk fizetési döntést.</div><button class="primary-button coral-button" data-onboarding-plan="trial">Próbaidő indítása</button></section>`);
+    openSheet('Próbaidő és csomagok','Nincs fizetés most',`<section class="auth-screen"><div class="plan-hero"><div class="welcome-brand"><img src="assets/brand/hirbeszed-mark-light.svg" alt=""><div class="welcome-wordmark"><span>Hír</span>beszéd</div></div><div class="auth-kicker">14 NAPOS PRÓBA</div><h1>Kezdd el ingyen, előfizetés nélkül.</h1><p>Most csak a próbaidőt indítjuk. A próba lejártakor ugyanez az oldal segít majd eldönteni, hogy Alap vagy Pro csomaggal folytatod.</p></div><div class="plan-list-v4"><button class="plan-choice selected" data-onboarding-plan="trial"><span class="choice-dot">✓</span><span class="choice-copy"><em>ALAPÉRTELMEZETT</em><strong>Próbaidő megkezdése</strong><small>14 napig kipróbálhatod az appot fizetés nélkül. A felolvasó, hírfolyam, mentések és asszisztens tesztelhető.</small></span><b class="choice-price">0 Ft</b></button><button class="plan-choice" data-onboarding-plan="basic"><span class="choice-dot"></span><span class="choice-copy"><strong>Hírbeszéd Alap</strong><small>1500 Ft/hó. Rendszerhangos felolvasás, Felolvasó nézet, RSS hírfolyam, mentett hírek, előzmények és alap asszisztens.</small></span><b class="choice-price">1500 Ft/hó</b></button><button class="plan-choice" data-onboarding-plan="pro"><span class="choice-dot"></span><span class="choice-copy"><em>PRÉMIUM HANG</em><strong>Hírbeszéd Pro</strong><small>3500 Ft/hó. Minden Alap funkció, természetesebb AI-felolvasás és havi 240 perc Pro hangkeret. Ha elfogy, a felolvasás automatikusan visszavált az Alap rendszerhangra.</small></span><b class="choice-price">3500 Ft/hó</b></button></div><button class="primary-button coral-button" data-onboarding-plan="trial">Próbaidő indítása</button></section>`);
   }
 
   function resetSheet(){
@@ -197,6 +198,43 @@
     }
     accountSheet();
   }
+
+  function returnToWelcomeFromPlans(){
+    const onboarding=onboardingState();
+    onboarding.required=true;
+    onboarding.introSeen=false;
+    onboarding.authDone=false;
+    onboarding.subscriptionDone=false;
+    onboarding.completed=false;
+    onboarding.proOfferAvailable=false;
+
+    const auth=authState();
+    auth.loggedIn=false;
+    auth.name='';
+    auth.email='';
+    auth.phone='';
+    auth.provider='';
+    auth.twoFactor=false;
+    auth.pendingMode='';
+    auth.draftName='';
+    auth.draftEmail='';
+    auth.draftPhone='';
+
+    saveState();
+    setOnboardingLayout(true);
+    welcomeSheet();
+  }
+
+  document.addEventListener('click',function(event){
+    if(!event.target.closest('#sheetBack'))return;
+    const body=document.getElementById('sheetBody');
+    const isOnboardingPlans=!!body?.querySelector('.plan-list-v4 [data-onboarding-plan]');
+    if(!onboardingState().required||!isOnboardingPlans)return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    returnToWelcomeFromPlans();
+  },true);
 
   function startCarExperience(withSpeech){
     safeStopSpeech(false);
@@ -247,13 +285,15 @@
     const onboarding=onboardingState();
     if(!onboarding.proOfferAvailable||state.route!=='car'||state.subscription&&state.subscription.plan==='pro')return;
     const controls=document.querySelector('.car-controls');
-    if(!controls||document.querySelector('[data-onboarding-pro-preview]'))return;
+    const waveArea=document.querySelector('.car-wave-area');
+    const voicePanel=document.querySelector('.voice-command-panel');
+    if(!controls||document.querySelector('.pro-sample-card'))return;
     const card=document.createElement('button');
     card.type='button';
     card.className='pro-sample-card';
     card.dataset.onboardingProPreview='true';
     card.innerHTML='<span class="pro-sample-icon">✦</span><span><strong>Próbáld ki a Pro hangot</strong><small>Egyszeri prototípus ajánlat · 3 hír prémium AI-felolvasással</small></span><b>3 hír ›</b>';
-    controls.before(card);
+    (waveArea||voicePanel||controls).before(card);
   }
 
   function renderSettingsV3(){
@@ -302,12 +342,18 @@
         welcomeSheet();
         return;
       }
-      safeStopSpeech(false);
-      state.route=route.dataset.route;
+      const nextRoute=route.dataset.route;
       sheet.classList.remove('open');
       sheet.setAttribute('aria-hidden','true');
+      if(typeof changeRoute==='function'){
+        changeRoute(nextRoute);
+        return;
+      }
+      safeStopSpeech(false);
+      state.route=nextRoute;
       saveState();
       render();
+      if(typeof activateRouteAudio==='function')activateRouteAudio(state.route);
       return;
     }
 
