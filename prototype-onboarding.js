@@ -99,6 +99,11 @@
     if(el){el.textContent=message;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800);}
   }
 
+  function setOnboardingLayout(active){
+    document.getElementById('phone')?.classList.toggle('onboarding-active',!!active);
+    document.documentElement.classList.toggle('onboarding-active',!!active);
+  }
+
   function privacyAccepted(){
     const box=document.getElementById('privacyAccepted');
     if(box&&!box.checked){
@@ -196,6 +201,7 @@
 
   function showOnboardingSources(){
     ensureOnboardingStyle();
+    setOnboardingLayout(true);
     const live=liveState()||storedState();
     const count=sourceCount(live.sources);
     if(typeof openSheet!=='function')return;
@@ -216,6 +222,7 @@
 
   function showOnboardingAddSource(){
     ensureOnboardingStyle();
+    setOnboardingLayout(true);
     if(typeof openSheet!=='function')return;
     const recommendations=['444','G7','Hírstart','Index','Népszava'];
     openSheet('Új RSS-forrás','Ajánlásból vagy RSS-linkkel',`
@@ -255,6 +262,7 @@
     live.playing=false;
     saveLiveState();
     try{sessionStorage.removeItem(LAUNCH);}catch(_){}
+    setOnboardingLayout(false);
     document.getElementById('sheet')?.classList.remove('open');
     document.getElementById('sheet')?.setAttribute('aria-hidden','true');
     try{if(typeof render==='function')render();}catch(_){}
@@ -279,6 +287,7 @@
 
   function showPlans(){
     ensureOnboardingStyle();
+    if((liveState()||storedState()).onboarding?.required)setOnboardingLayout(true);
     if(typeof openSheet==='function')openSheet('Próbaidő és csomagok','Nincs fizetés most',plansHtml());
   }
 
@@ -681,6 +690,9 @@
     onboardingSyncScheduled=true;
     requestAnimationFrame(runOnboardingSync);
   });
+
+  window.hirbeszedShowOnboardingSources=showOnboardingSources;
+  window.hirbeszedSetOnboardingLayout=setOnboardingLayout;
 
   function boot(){
     ensureOnboardingStyle();

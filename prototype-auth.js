@@ -57,6 +57,11 @@
     if(update&&state.route==='car')renderCar();
   }
 
+  function setOnboardingLayout(active){
+    document.getElementById('phone')?.classList.toggle('onboarding-active',!!active);
+    document.documentElement.classList.toggle('onboarding-active',!!active);
+  }
+
   if(typeof stopSpeech==='function'&&!stopSpeech.__safeRoutePatch){
     const originalStopSpeech=stopSpeech;
     stopSpeech=function(update=true){
@@ -204,6 +209,7 @@
     state.mic=true;
     state.playing=false;
     saveState();
+    setOnboardingLayout(false);
     closeSheet();
     startCarExperience(true);
     toast(plan==='trial'?'A 14 napos próba elindult':(selectedPlan==='pro'?'Pro':'Alap')+' csomag kiválasztva');
@@ -272,6 +278,7 @@
       event.preventDefault();
       event.stopImmediatePropagation();
       if(onboardingState().required){
+        setOnboardingLayout(true);
         welcomeSheet();
         return;
       }
@@ -418,16 +425,19 @@
   function enforceStartup(){
     const onboarding=onboardingState();
     if(onboarding.required){
+      setOnboardingLayout(true);
       safeStopSpeech(false);
       state.route='car';
       state.autoNext=true;
       state.mic=true;
       saveState();
-      if(onboarding.authDone&&!onboarding.subscriptionDone)plansSheet();
+      if(onboarding.authDone&&onboarding.subscriptionDone&&!onboarding.rssDone&&typeof window.hirbeszedShowOnboardingSources==='function')window.hirbeszedShowOnboardingSources();
+      else if(onboarding.authDone&&!onboarding.subscriptionDone)plansSheet();
       else if(onboarding.introSeen)registerSheet();
       else welcomeSheet();
       return;
     }
+    setOnboardingLayout(false);
     if(authState().loggedIn&&isSubscriptionReady()&&!sessionStorage.getItem(LAUNCH)){
       sessionStorage.setItem(LAUNCH,'1');
       startCarExperience(true);
