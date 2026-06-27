@@ -100,8 +100,19 @@
   }
 
   function setOnboardingLayout(active){
-    document.getElementById('phone')?.classList.toggle('onboarding-active',!!active);
+    const phone=document.getElementById('phone');
+    phone?.classList.remove('startup-locked');
+    phone?.classList.toggle('onboarding-active',!!active);
+    document.documentElement.classList.remove('startup-locked');
     document.documentElement.classList.toggle('onboarding-active',!!active);
+  }
+
+  function closeOnboardingSheet(){
+    const activeSheet=document.getElementById('sheet');
+    const body=document.getElementById('sheetBody');
+    if(body)body.scrollTop=0;
+    activeSheet?.classList.remove('open');
+    activeSheet?.setAttribute('aria-hidden','true');
   }
 
   function privacyAccepted(){
@@ -263,20 +274,23 @@
     saveLiveState();
     try{sessionStorage.removeItem(LAUNCH);}catch(_){}
     setOnboardingLayout(false);
-    document.getElementById('sheet')?.classList.remove('open');
-    document.getElementById('sheet')?.setAttribute('aria-hidden','true');
-    try{if(typeof render==='function')render();}catch(_){}
-    try{
-      if(typeof speakCurrent==='function')speakCurrent();
-      else if(live){live.playing=true;saveLiveState();if(typeof renderCar==='function')renderCar();}
-    }catch(_){
-      live.playing=true;
-      saveLiveState();
-      try{if(typeof renderCar==='function')renderCar();}catch(__){}
-    }
+    closeOnboardingSheet();
+    requestAnimationFrame(()=>{
+      try{if(typeof render==='function')render();}catch(_){}
+      requestAnimationFrame(()=>{
+        try{
+          if(typeof speakCurrent==='function')speakCurrent();
+          else if(live){live.playing=true;saveLiveState();if(typeof renderCar==='function')renderCar();}
+        }catch(_){
+          live.playing=true;
+          saveLiveState();
+          try{if(typeof renderCar==='function')renderCar();}catch(__){}
+        }
+      });
+    });
     setTimeout(()=>{
       const current=liveState();
-      if(current?.route==='car'&&!current.playing){
+      if(current?.route==='car'&&!current.playing&&!current.onboarding?.required){
         current.playing=true;
         saveLiveState();
         try{if(typeof renderCar==='function')renderCar();}catch(_){}

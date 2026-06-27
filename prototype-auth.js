@@ -58,8 +58,28 @@
   }
 
   function setOnboardingLayout(active){
-    document.getElementById('phone')?.classList.toggle('onboarding-active',!!active);
+    const phone=document.getElementById('phone');
+    phone?.classList.remove('startup-locked');
+    phone?.classList.toggle('onboarding-active',!!active);
+    document.documentElement.classList.remove('startup-locked');
     document.documentElement.classList.toggle('onboarding-active',!!active);
+  }
+
+  function closeOnboardingSheet(){
+    const activeSheet=document.getElementById('sheet');
+    const body=document.getElementById('sheetBody');
+    if(body)body.scrollTop=0;
+    activeSheet?.classList.remove('open');
+    activeSheet?.setAttribute('aria-hidden','true');
+    try{activeSheetRenderer=null;}catch(_){}
+  }
+
+  function enterNormalApp(withSpeech){
+    setOnboardingLayout(false);
+    closeOnboardingSheet();
+    requestAnimationFrame(function(){
+      startCarExperience(withSpeech);
+    });
   }
 
   if(typeof stopSpeech==='function'&&!stopSpeech.__safeRoutePatch){
@@ -209,16 +229,16 @@
     state.mic=true;
     state.playing=false;
     saveState();
-    setOnboardingLayout(false);
-    closeSheet();
-    startCarExperience(true);
+    enterNormalApp(true);
     toast(plan==='trial'?'A 14 napos próba elindult':(selectedPlan==='pro'?'Pro':'Alap')+' csomag kiválasztva');
   }
 
   function resetPrototypeData(){
-    const fresh={route:'car',sort:'latest',category:'fresh',theme:'system',mic:true,autoNext:true,playing:false,carIndex:0,assistantMode:'voice',read:[],saved:[],history:[],notifications:true,location:false,mobileData:true,subscription:{status:'inactive',plan:'basic',trialDays:14,aiMinutesUsed:0,aiMinutesLimit:0,proPreviewAvailable:true,proPreviewRemaining:3,proPreviewActive:false},auth:{loggedIn:false,name:'',email:'',phone:'',provider:'',twoFactor:false},onboarding:{required:true,introSeen:false,authDone:false,subscriptionDone:false,privacyAccepted:false,proOfferAvailable:true,completed:false}};
+    const fresh={route:'car',sort:'latest',category:'fresh',theme:'system',mic:true,autoNext:true,playing:false,carIndex:0,assistantMode:'voice',read:[],saved:[],history:[],notifications:true,location:false,mobileData:true,subscription:{status:'inactive',plan:'basic',trialDays:14,aiMinutesUsed:0,aiMinutesLimit:0,proPreviewAvailable:true,proPreviewRemaining:3,proPreviewActive:false},auth:{loggedIn:false,name:'',email:'',phone:'',provider:'',twoFactor:false},onboarding:{required:true,introSeen:false,authDone:false,subscriptionDone:false,rssDone:false,privacyAccepted:false,proOfferAvailable:true,completed:false}};
     localStorage.setItem(STORE,JSON.stringify(fresh));
     sessionStorage.removeItem(LAUNCH);
+    setOnboardingLayout(true);
+    closeOnboardingSheet();
     toast('Prototípusadatok törölve');
     setTimeout(function(){location.reload();},250);
   }
