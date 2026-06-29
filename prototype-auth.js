@@ -272,7 +272,7 @@
   }
 
   function resetPrototypeData(){
-    const fresh={route:'car',sort:'latest',category:'fresh',theme:'system',mic:true,autoNext:true,playing:false,carIndex:0,assistantMode:'voice',read:[],saved:[],history:[],notifications:true,location:false,mobileData:true,subscription:{status:'inactive',plan:'basic',trialDays:14,aiMinutesUsed:0,aiMinutesLimit:0,proPreviewAvailable:true,proPreviewRemaining:3,proPreviewActive:false},auth:{loggedIn:false,name:'',email:'',phone:'',provider:'',twoFactor:false},onboarding:{required:true,introSeen:false,authDone:false,subscriptionDone:false,rssDone:false,privacyAccepted:false,proOfferAvailable:true,completed:false}};
+    const fresh={route:'car',sort:'latest',category:'fresh',theme:'system',mic:true,autoNext:true,playing:false,carIndex:0,assistantMode:'voice',sideNavPosition:'left',read:[],saved:[],history:[],notifications:true,location:false,mobileData:true,subscription:{status:'inactive',plan:'basic',trialDays:14,aiMinutesUsed:0,aiMinutesLimit:0,proPreviewAvailable:true,proPreviewRemaining:3,proPreviewActive:false},auth:{loggedIn:false,name:'',email:'',phone:'',provider:'',twoFactor:false},onboarding:{required:true,introSeen:false,authDone:false,subscriptionDone:false,rssDone:false,privacyAccepted:false,proOfferAvailable:true,completed:false}};
     localStorage.setItem(STORE,JSON.stringify(fresh));
     sessionStorage.removeItem(LAUNCH);
     setOnboardingLayout(true);

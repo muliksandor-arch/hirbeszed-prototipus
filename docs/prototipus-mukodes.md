@@ -1,6 +1,6 @@
 # Hírbeszéd prototípus - rögzített működés
 
-Aktuális prototípusverzió: **2.000**.
+Aktuális prototípusverzió: **2.001**.
 
 Ez a dokumentum a jelenlegi, elfogadott prototípus-működést rögzíti. A cél, hogy a további fejlesztések ne egymásra rakott javítások legyenek, hanem ehhez a stabil működési alaphoz igazodjanak.
 

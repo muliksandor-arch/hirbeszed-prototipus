@@ -1,0 +1,36 @@
+{
+  "brand": {
+    "name": "Hírbeszéd",
+    "petrol": "#173B45",
+    "teal": "#2F8178",
+    "tealBright": "#53B8AA",
+    "coral": "#E45F48",
+    "offWhite": "#F6F9F8",
+    "midnight": "#0D191E",
+    "darkSurface": "#15262C",
+    "darkText": "#14272D",
+    "lightText": "#EDF5F3"
+  },
+  "light": {
+    "background": "#F6F9F8",
+    "surface": "#FFFFFF",
+    "primary": "#173B45",
+    "accent": "#2F8178",
+    "voice": "#53B8AA",
+    "attention": "#E45F48",
+    "text": "#14272D",
+    "textMuted": "#6B7C81",
+    "border": "#D9E4E2"
+  },
+  "dark": {
+    "background": "#0D191E",
+    "surface": "#15262C",
+    "primary": "#EDF5F3",
+    "accent": "#53B8AA",
+    "voice": "#2F8178",
+    "attention": "#E45F48",
+    "text": "#EDF5F3",
+    "textMuted": "#9FB1B4",
+    "border": "#284048"
+  }
+}

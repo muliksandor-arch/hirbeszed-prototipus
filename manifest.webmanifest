@@ -2,7 +2,7 @@
   "name":"Hírbeszéd prototípus",
   "short_name":"Hírbeszéd",
   "description":"RSS hírolvasó és hangvezérelt felolvasó prototípusa",
-  "version":"2.000",
+  "version":"2.001",
   "start_url":"./",
   "scope":"./",
   "display":"standalone",

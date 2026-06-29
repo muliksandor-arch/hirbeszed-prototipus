@@ -43,7 +43,8 @@
     const items=filteredArticles();
     view.innerHTML=`<div class="segmented"><button data-sort="latest" class="${state.sort==='latest'?'active':''}">Legfrissebb</button><button data-sort="personal" class="${state.sort==='personal'?'active':''}">Nekem</button><button data-sort="unread" class="${state.sort==='unread'?'active':''}">Olvasatlan</button></div>
       <div class="chips topic-strip" aria-label="Hírtémák">${visibleTopics.map(topic=>`<button class="chip ${state.category===topic.id?'active':''}" data-category="${topic.id}">${topic.name}</button>`).join('')}</div>
-      <div class="feed-list">${items.length?items.map((article,index)=>articleCard(article,index>0)).join(''):`<div class="empty"><div class="empty-icon">✓</div><h2>Minden hírt átnéztél</h2><p>Válassz másik témát vagy frissítsd az RSS-forrásokat.</p></div>`}</div>`;
+      <div class="feed-list">${items.length?items.map(article=>articleCard(article,false)).join(''):`<div class="empty"><div class="empty-icon">✓</div><h2>Minden hírt átnéztél</h2><p>Válassz másik témát vagy frissítsd az RSS-forrásokat.</p></div>`}</div>`;
+    if(window.HB_SYNC_RESPONSIVE_PREVIEW_MODE)window.HB_SYNC_RESPONSIVE_PREVIEW_MODE();
   };
 
   settingsItems=function(){

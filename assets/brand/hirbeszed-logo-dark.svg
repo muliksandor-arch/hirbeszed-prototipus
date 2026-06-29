@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 240" role="img" aria-label="Hírbeszéd logó – sötét téma">
+  <g transform="translate(0 -8) scale(.92)">
+    <path fill="#EDF5F3" d="M128 22C66.1 22 16 66.5 16 121.4c0 35.2 20.8 66.1 52.2 83.8l-9.5 28.8 35.6-17.2c10.7 2.7 22 4.1 33.7 4.1 61.9 0 112-44.5 112-99.5S189.9 22 128 22Z"/>
+    <rect x="78" y="101" width="12" height="40" rx="6" fill="#2F8178"/><rect x="98" y="89" width="12" height="64" rx="6" fill="#2F8178"/><rect x="122" y="77" width="12" height="88" rx="6" fill="#E45F48"/><rect x="146" y="89" width="12" height="64" rx="6" fill="#2F8178"/><rect x="166" y="101" width="12" height="40" rx="6" fill="#2F8178"/>
+  </g>
+  <text x="248" y="151" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="92" font-weight="750" letter-spacing="-4"><tspan fill="#E45F48">Hír</tspan><tspan fill="#EDF5F3">beszéd</tspan></text>
+</svg>

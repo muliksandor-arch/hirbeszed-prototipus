@@ -38,7 +38,7 @@ const topics = [
 const ASSISTANT_CHAT_MAX_MESSAGES = 40;
 const defaults = {
   route:'car', sort:'latest', category:'fresh', theme:'system', mic:true, autoNext:true,
-  playing:false, paused:false, detailedRead:false, carIndex:0, assistantMode:'voice', read:[], saved:[], history:[], assistantChat:[],
+  playing:false, paused:false, detailedRead:false, carIndex:0, assistantMode:'voice', sideNavPosition:'left', read:[], saved:[], history:[], assistantChat:[],
   sources:{HVG:true,Portfolio:true,Qubit:true,'Nemzeti Sport':true,Telex:true,'24.hu':true},
   enabledTopics:topics.map(topic=>topic.id), notifications:true, location:false, mobileData:true,
   subscription:{status:'inactive',plan:'pro',trialDays:14,aiMinutesUsed:0,aiMinutesLimit:240,proPreviewAvailable:true,proPreviewRemaining:3,proPreviewActive:false}
@@ -50,6 +50,7 @@ state.subscription = {...defaults.subscription,...(state.subscription || {})};
 state.sources = {...defaults.sources,...(state.sources || {})};
 state.enabledTopics = Array.isArray(state.enabledTopics) ? state.enabledTopics : [...defaults.enabledTopics];
 state.assistantChat = Array.isArray(state.assistantChat) ? state.assistantChat.filter(item=>item&&['user','assistant'].includes(item.role)&&typeof item.text==='string'&&item.text.trim()).slice(-ASSISTANT_CHAT_MAX_MESSAGES) : [];
+if(!['left','right'].includes(state.sideNavPosition))state.sideNavPosition='left';
 const legacyTopics = {Mind:'fresh',Technológia:'tech_ai',Világhírek:'foreign','Helyi hírek':'local'};
 state.category = legacyTopics[state.category] || topics.find(topic=>topic.name===state.category)?.id || state.category || 'fresh';
 let currentUtterance = null; let speechRunId = 0; let currentSpeechText = ''; let currentSpeechOffset = 0; let currentSpeechDetails = false; let assistantSpeaking = false; let currentRecognition = null; let recognitionContext = null; let toastTimer = null; let activeSheetRenderer = null; let carAutoAdvanceTimer = null; let carDeferredSheetTimer = null; let carMicWindowTimer = null; let carMicWindowActive = false;
@@ -99,6 +100,25 @@ function applyTheme(){
   const theme=effectiveTheme(); document.documentElement.dataset.theme=theme;
   $('#brandMark').src=`assets/brand/hirbeszed-mark-${theme}.svg`;
   document.querySelector('meta[name="theme-color"]').content=theme==='dark'?'#0D191E':'#F6F9F8';
+}
+function applySideNavPreference(){
+  const right=state.sideNavPosition==='right';
+  const phone=$('#phone');
+  document.documentElement.classList.toggle('side-nav-right',right);
+  document.documentElement.classList.toggle('side-nav-left',!right);
+  if(phone){
+    phone.classList.toggle('side-nav-right',right);
+    phone.classList.toggle('side-nav-left',!right);
+  }
+  const button=document.querySelector('[data-side-nav-toggle]');
+  const label=document.querySelector('.side-switch-label');
+  if(button)button.setAttribute('aria-label',right?'Menü áthelyezése bal oldalra':'Menü áthelyezése jobb oldalra');
+  if(label)label.textContent=right?'Balra':'Jobbra';
+}
+function toggleSideNavPosition(){
+  state.sideNavPosition=state.sideNavPosition==='right'?'left':'right';
+  applySideNavPreference();
+  saveState();
 }
 function toast(message,options={}){
   const el=$('#toast');
@@ -204,7 +224,7 @@ function toggleSaved(id){ state.saved.has(id)?state.saved.delete(id):state.saved
 
 function articleCard(article,compact=false){
   const read=state.read.has(article.id), saved=state.saved.has(article.id);
-  return `<article class="news-card ${compact?'compact-card':''} ${read?'read':''}" data-article="${escapeHtml(article.id)}">
+  return `<article class="news-card news-box ${compact?'compact-card news-box-small':'news-box-large'} ${read?'read':''}" data-article="${escapeHtml(article.id)}">
     <img class="article-image" src="${escapeHtml(article.image)}" alt="A hír illusztrációja">
     <div class="card-body"><div class="meta-line">${read?'':`<span class="unread-dot"></span>`}<span>${escapeHtml(article.source)}</span><span class="meta-time">· ${escapeHtml(article.time)}</span><button type="button" class="save-button ${saved?'saved':''}" data-save="${escapeHtml(article.id)}" aria-label="Mentés">${saved?'♥':'♡'}</button></div>
     <h2>${escapeHtml(article.title)}</h2>${compact?'':`<p>${escapeHtml(article.excerpt)}</p>`}</div></article>`;
@@ -221,7 +241,8 @@ function renderFeed(){
   const visibleTopics=topics.filter(topic=>topic.id==='fresh'||state.enabledTopics.includes(topic.id)); const items=filteredArticles();
   view.innerHTML=`<div class="segmented"><button data-sort="latest" class="${state.sort==='latest'?'active':''}">Legfrissebb</button><button data-sort="personal" class="${state.sort==='personal'?'active':''}">Nekem</button><button data-sort="unread" class="${state.sort==='unread'?'active':''}">Olvasatlan</button></div>
     <div class="chips topic-strip" aria-label="Hírtémák">${visibleTopics.map(topic=>`<button class="chip ${state.category===topic.id?'active':''}" data-category="${topic.id}">${topic.name}</button>`).join('')}</div>
-    <div class="feed-list">${items.length?items.map((a,i)=>articleCard(a,i>0)).join(''):`<div class="empty"><div class="empty-icon">✓</div><h2>Minden hírt átnéztél</h2><p>Válassz másik témát vagy frissítsd az RSS-forrásokat.</p></div>`}</div>`;
+    <div class="feed-list">${items.length?items.map(a=>articleCard(a,false)).join(''):`<div class="empty"><div class="empty-icon">✓</div><h2>Minden hírt átnéztél</h2><p>Válassz másik témát vagy frissítsd az RSS-forrásokat.</p></div>`}</div>`;
+  if(window.HB_SYNC_RESPONSIVE_PREVIEW_MODE)window.HB_SYNC_RESPONSIVE_PREVIEW_MODE();
 }
 
 function currentCarArticle(){ return articles.length?articles[state.carIndex%articles.length]:EMPTY_ARTICLE; }
@@ -1023,10 +1044,13 @@ function settingRow(item){return `<button class="settings-row" data-setting="${i
 function render(){
   stopSpeech(false);
   if(state.route!=='car'){stopVoiceListening();state.detailedRead=false;}
+  applySideNavPreference();
   document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.route===state.route));
+  view.classList.toggle('feed-route-view',state.route==='feed');
   view.classList.toggle('car-route-view',state.route==='car');
   view.classList.toggle('assistant-route-view',state.route==='assistant');
   ({feed:renderFeed,car:renderCar,assistant:renderAssistant,settings:renderSettings}[state.route]||renderCar)();
+  if(window.HB_SYNC_RESPONSIVE_PREVIEW_MODE)window.HB_SYNC_RESPONSIVE_PREVIEW_MODE();
   view.scrollTop=0; saveState(); renderSubscriptionGate();
 }
 function renderSubscriptionGate(){
@@ -1039,14 +1063,15 @@ function renderSubscriptionGate(){
   if(locked){stopSpeech(false);sheet.classList.remove('open');sheet.setAttribute('aria-hidden','true');}
 }
 
-function openSheet(title,subtitle,html,renderer=null){ $('#sheetTitle').textContent=title; $('#sheetSubtitle').textContent=subtitle||''; sheetBody.innerHTML=html; activeSheetRenderer=renderer; sheet.classList.remove('sheet-no-header'); sheet.classList.add('open'); sheet.setAttribute('aria-hidden','false'); }
-function closeSheet(){ sheet.classList.remove('open','sheet-no-header'); sheet.setAttribute('aria-hidden','true'); activeSheetRenderer=null; if(state.route==='feed')renderFeed(); if(state.route==='settings')renderSettings(); }
+function openSheet(title,subtitle,html,renderer=null){ $('#sheetTitle').textContent=title; $('#sheetSubtitle').textContent=subtitle||''; sheetBody.innerHTML=html; activeSheetRenderer=renderer; sheet.classList.remove('sheet-no-header','detail-sheet'); sheet.classList.add('open'); sheet.setAttribute('aria-hidden','false'); }
+function closeSheet(){ sheet.classList.remove('open','sheet-no-header','detail-sheet'); sheet.setAttribute('aria-hidden','true'); activeSheetRenderer=null; if(state.route==='feed')renderFeed(); if(state.route==='settings')renderSettings(); }
 function openArticle(id){
   const a=articleById(id);
   if(!a)return;
   recordRead(id);
-  const originalButton=a.url?`<button class="primary-button" data-original="${escapeHtml(a.id)}">Eredeti cikk megnyitása</button>`:'';
-  openSheet('Hírrészlet',`${a.source} · ${a.time}`,`<article class="detail"><div class="detail-hero"><img src="${escapeHtml(a.image)}" alt="A hír illusztrációja"></div><div class="meta-line"><span>${escapeHtml(a.category)}</span><span class="meta-time">· ${escapeHtml(a.source)}</span></div><h1>${escapeHtml(a.title)}</h1><div class="detail-actions"><button data-detail-save="${escapeHtml(a.id)}">${state.saved.has(a.id)?'♥ Mentve':'♡ Mentés'}</button><button data-detail-share="${escapeHtml(a.id)}">↗ Megosztás</button><button data-unread="${escapeHtml(a.id)}">○ Olvasatlan</button></div><p class="detail-copy">${escapeHtml(a.body)}</p>${originalButton}</article>`);
+  const originalButton=a.url?`<button class="primary-button detail-original-button" data-original="${escapeHtml(a.id)}">Eredeti cikk megnyitása</button>`:'';
+  openSheet('Részletes hír',`${a.source} · ${a.time}`,`<article class="detail detail-carded"><section class="detail-lead-card"><div class="detail-hero"><img src="${escapeHtml(a.image)}" alt="A hír illusztrációja"></div><div class="detail-title-block"><div class="meta-line detail-meta"><span>${escapeHtml(a.category)}</span><span class="meta-time">· ${escapeHtml(a.source)} · ${escapeHtml(a.time)}</span></div><h1>${escapeHtml(a.title)}</h1></div></section><section class="detail-content-column"><div class="detail-actions"><button data-detail-save="${escapeHtml(a.id)}">${state.saved.has(a.id)?'♥ Mentve':'♡ Mentés'}</button><button data-detail-share="${escapeHtml(a.id)}">↗ Megosztás</button><button data-unread="${escapeHtml(a.id)}">○ Olvasatlan</button></div><section class="detail-content-card"><p class="detail-copy">${escapeHtml(a.body)}</p>${originalButton}</section></section></article>`);
+  sheet.classList.add('detail-sheet');
 }
 function searchSheet(){ openSheet('Keresés','Hírek, témák és források',`<input id="searchInput" class="search-input" type="search" placeholder="Keresés…" autofocus><div id="searchResults">${articles.map(a=>articleCard(a,true)).join('')}</div>`); }
 function librarySheet(tab='saved'){
@@ -1112,6 +1137,7 @@ function settingsSheet(type){
 }
 
 document.addEventListener('click',event=>{
+  const sideNavToggle=event.target.closest('[data-side-nav-toggle]'); if(sideNavToggle){toggleSideNavPosition();return;}
   const route=event.target.closest('[data-route]'); if(route){changeRoute(route.dataset.route);return;}
   const save=event.target.closest('[data-save]'); if(save){event.stopPropagation();toggleSaved(save.dataset.save); if(state.route==='feed')renderFeed();return;}
   const card=event.target.closest('[data-article]'); if(card){openArticle(card.dataset.article);return;}
@@ -1173,6 +1199,7 @@ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&sheet.class
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(state.theme==='system')applyTheme();});
 async function startApp(){
   applyTheme();
+  applySideNavPreference();
   await loadNewsArticles();
   await loadAssistantPromptProvider();
   if(state.route==='assistant'&&!state.assistantChat.length)prepareAssistantVoiceOpening();

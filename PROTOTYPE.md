@@ -1,6 +1,6 @@
 # Hírbeszéd - kattintható prototípus
 
-Aktuális prototípusverzió: **2.000**.
+Aktuális prototípusverzió: **2.001**.
 
 Ez a projekt gyökerében található mobilos PWA-prototípus. A jelenlegi rögzített irány: az app központi élménye a **Felolvasó**, amely hírfelolvasásra, hangutasításokra és gyors hírléptetésre épül.
 
